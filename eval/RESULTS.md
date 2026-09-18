@@ -13,7 +13,7 @@ Ledger makes a regulatory claim from a photograph, so the question this harness 
 ## Fixtures
 
 - 24 order records, 24 of them synthetic.
-- 319 line items with hand-labelled ground truth: category, variety, storage, units per pack, packs, and whether the line can be counted at all.
+- 319 line items with hand-labeled ground truth: category, variety, storage, units per pack, packs, and whether the line can be counted at all.
 - Expected verdicts come from `eval/reference-scoring.mjs`, a second implementation of the stocking standard written from the rule rather than from the app, and are committed as literals on each record.
 - **Every fixture is synthetic.** No real store's order record is in this repository. `eval/README.md` sets out what that costs these numbers.
 
@@ -108,5 +108,5 @@ Line-level results split by the failure mode each line is tagged with.
 - Whether the model reads real handwriting, real glare or a real dot-matrix printer. The images are drawn from HTML, and the hand-written ones simulate an irregular hand rather than photographing one.
 - Whether the order record reflects what is on the shelf. The eval scores the record, and so does the app.
 - Whether USDA would classify these products or varieties the same way. The category and perishable labels here are our reading of the rule.
-- Anything about Criterion B, specialty-store treatment, or authorisation itself.
+- Anything about Criterion B, specialty-store treatment, or authorization itself.
 

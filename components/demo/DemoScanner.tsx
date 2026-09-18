@@ -291,6 +291,10 @@ function Scorecard({
       label: es ? "con un perecedero" : "with a perishable",
     },
   ];
+  // What the fix optimizer solved for, when there is anything to solve.
+  if (result.fixPlan && result.fixPlan.totalAddedUnits > 0) {
+    stats.push({ value: String(result.fixPlan.totalAddedUnits), label: t.unitsToAdd });
+  }
 
   return (
     <div className={styles.scorecard}>
@@ -306,6 +310,8 @@ function Scorecard({
         <p className={`small mute ${styles.scDate}`}>
           {t.scannedOn} {dateFmt}
         </p>
+        {/* docs/regulatory-basis.md: this line travels with the result. */}
+        <p className={styles.disclosure}>{t.disclosure}</p>
       </header>
 
       <div className={styles.statRow}>
@@ -409,20 +415,46 @@ function Scorecard({
         {result.fixes.length === 0 ? (
           <p className="body mute">{t.fixesEmpty}</p>
         ) : (
-          <ol className={styles.fixList}>
-            {result.fixes.map((fix, i) => (
-              <li key={i} className={styles.fixItem}>
-                <span className={styles.fixIndex}>{i + 1}</span>
-                <div>
-                  <p className={styles.fixSuggestion}>{fix.itemSuggestion}</p>
-                  <p className="small mute">
-                    <span className={styles.whyLabel}>{t.whyItHelps}:</span>{" "}
-                    {fix.whyItHelps}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <>
+            {result.fixPlan ? (
+              <p className={`small mute ${styles.planSummary}`}>
+                {t.planSummary(result.fixPlan.totalAddedUnits, result.fixes.length)}
+                {result.fixPlan.sufficient ? null : (
+                  <>
+                    {" "}
+                    <strong className={styles.planShort}>{t.planShort}</strong>
+                  </>
+                )}
+              </p>
+            ) : null}
+            <ol className={styles.fixList}>
+              {result.fixes.map((fix, i) => (
+                <li key={i} className={styles.fixItem}>
+                  <span className={styles.fixIndex}>{i + 1}</span>
+                  <div>
+                    <p className={styles.fixSuggestion}>{fix.itemSuggestion}</p>
+                    <p className="small mute">
+                      <span className={styles.whyLabel}>{t.whyItHelps}:</span>{" "}
+                      {fix.whyItHelps}
+                    </p>
+                    {/* Which requirement this one purchase actually clears. The
+                        optimizer works it out by replaying the plan, so it is a
+                        fact about the plan rather than a sentence beside it. */}
+                    {fix.clears && fix.clears.length > 0 ? (
+                      <p className={styles.clears}>
+                        <span className={styles.clearsLabel}>{t.clearsLabel}</span>
+                        {fix.clears.map((phrase) => (
+                          <span key={phrase} className={styles.clearsChip}>
+                            {phrase}
+                          </span>
+                        ))}
+                      </p>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </>
         )}
       </div>
     </div>

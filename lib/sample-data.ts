@@ -24,16 +24,22 @@ const SAMPLE_ES: ScanResult = {
       itemSuggestion: "Leche evaporada Carnation, lata de 12 oz (surta 3)",
       whyItHelps:
         "Se conserva sin refrigeración y cuesta menos de $2 la lata. Agrega una 5.ª variedad de lácteos sin ocupar espacio en el refrigerador.",
+      addedUnits: 3,
+      clears: [],
     },
     {
       category: "dairy",
       itemSuggestion: "Queso americano Kraft Singles, 12 rebanadas (surta 3)",
       whyItHelps: "Una variedad de queso distinta al cheddar, así cuenta como 6.ª variedad de lácteos.",
+      addedUnits: 3,
+      clears: [],
     },
     {
       category: "dairy",
       itemSuggestion: "Queso cottage Daisy, 16 oz (surta 3)",
       whyItHelps: "Lleva los lácteos a 7 variedades y 23 unidades, cumpliendo ambos mínimos.",
+      addedUnits: 3,
+      clears: ["el mínimo de 7 variedades de lácteos", "el mínimo de 21 unidades de lácteos"],
     },
   ],
 };

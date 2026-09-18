@@ -37,6 +37,12 @@ export interface UiCopy {
   fixesTitle: string;
   fixesEmpty: string;
   whyItHelps: string;
+  /** Clipped to the result, as docs/regulatory-basis.md requires. */
+  disclosure: string;
+  unitsToAdd: string;
+  clearsLabel: string;
+  planSummary(units: number, items: number): string;
+  planShort: string;
   scannedOn: string;
   categoriesPassing: string;
   requiredNote: string;
@@ -59,15 +65,29 @@ export const UI_COPY: Record<Locale, UiCopy> = {
     tryError: "Something went wrong",
     loadSample: "View a sample scorecard",
     clear: "Clear",
-    verdictPass: "Well stocked",
-    verdictFail: "Understocked",
+    // The approved claim pattern, verbatim from docs/regulatory-basis.md. Not
+    // "well stocked" or "understocked": Ledger has seen one order record, which
+    // does not support a statement about the shelf.
+    verdictPass: "Estimated to meet the stocking standard",
+    verdictFail: "May not meet the stocking standard yet",
     totalUnits: "Total stocking units",
     perishableMet: "Categories with a perishable",
     varieties: "varieties",
     units: "units",
     perishableYes: "Perishable stocked",
     perishableNo: "No perishable",
-    fixesTitle: "How to pass",
+    fixesTitle: "Smallest order that clears every requirement",
+    disclosure:
+      "Readiness estimate only. Ledger checks the items it can read on this record " +
+      "against the Criterion A stocking thresholds. It is not an official USDA " +
+      "eligibility determination.",
+    unitsToAdd: "units to add",
+    clearsLabel: "Clears",
+    planSummary: (units, items) =>
+      `${units} stocking ${units === 1 ? "unit" : "units"} across ${items} ${items === 1 ? "item" : "items"}, solved for the fewest units added.`,
+    planShort:
+      "These items do not close every gap on their own. The requirements still " +
+      "unmet are listed above.",
     fixesEmpty: "Nothing to fix. Every category clears its minimums.",
     whyItHelps: "Why it helps",
     scannedOn: "Scanned",
@@ -90,15 +110,26 @@ export const UI_COPY: Record<Locale, UiCopy> = {
     tryError: "Algo salió mal",
     loadSample: "Ver un ejemplo",
     clear: "Borrar",
-    verdictPass: "Bien surtida",
-    verdictFail: "Poco surtida",
+    verdictPass: "Se estima que cumple con la norma de surtido",
+    verdictFail: "Es posible que aún no cumpla con la norma de surtido",
     totalUnits: "Unidades de surtido totales",
     perishableMet: "Categorías con un perecedero",
     varieties: "variedades",
     units: "unidades",
     perishableYes: "Perecedero surtido",
     perishableNo: "Sin perecedero",
-    fixesTitle: "Cómo aprobar",
+    fixesTitle: "El pedido más pequeño que cumple con todos los requisitos",
+    disclosure:
+      "Solo es una estimación. Ledger revisa los artículos que puede leer en este " +
+      "registro y los compara con los mínimos del Criterio A. No es una " +
+      "determinación oficial de elegibilidad del USDA.",
+    unitsToAdd: "unidades por agregar",
+    clearsLabel: "Cumple",
+    planSummary: (units, items) =>
+      `${units} ${units === 1 ? "unidad" : "unidades"} de surtido en ${items} ${items === 1 ? "artículo" : "artículos"}, calculado para agregar lo menos posible.`,
+    planShort:
+      "Estos artículos no cierran todas las brechas por sí solos. Los requisitos " +
+      "que siguen sin cumplirse aparecen arriba.",
     fixesEmpty: "No hay nada que corregir. Cada categoría cumple sus mínimos.",
     whyItHelps: "Por qué ayuda",
     scannedOn: "Escaneado",

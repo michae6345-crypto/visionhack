@@ -54,8 +54,8 @@ export function costKey(category: Category, variety: string): string {
 
 export interface OptimizeOptions {
   /**
-   * What to minimise. "units" (the default) minimises added stocking units,
-   * which is what a store with no price list cares about. "cost" minimises
+   * What to minimize. "units" (the default) minimizes added stocking units,
+   * which is what a store with no price list cares about. "cost" minimizes
    * money and needs a cost for every candidate it considers; when one is
    * missing the plan falls back to "units" and says so in `objective`.
    */
@@ -97,7 +97,7 @@ export interface FixPlan {
   totalAddedUnits: number;
   /** Null when any chosen action has no cost data. */
   totalCost: number | null;
-  /** What the search actually minimised. */
+  /** What the search actually minimized. */
   objective: "units" | "cost";
   /** True when carrying out every action makes the standard met. */
   sufficient: boolean;
@@ -113,7 +113,7 @@ interface Candidate {
   category: Category;
   /**
    * Position in the candidate list, used to break ties between candidates that
-   * cost the same. The catalogue is curated (shelf-stable staples first, so a
+   * cost the same. The catalog is curated (shelf-stable staples first, so a
    * store is not told to buy fridge space it does not need), and this keeps that
    * order meaningful instead of falling back to alphabetical.
    */
@@ -214,8 +214,8 @@ function candidatesFor(
 // ---------------------------------------------------------------------------
 /**
  * What the search is solving for. Normally the published thresholds. When the
- * suggestion catalogue is too small to reach them — an empty category needs
- * seven varieties and the catalogue may not offer seven — the search runs again
+ * suggestion catalog is too small to reach them — an empty category needs
+ * seven varieties and the catalog may not offer seven — the search runs again
  * against what is actually reachable, so the store gets the best available plan
  * plus an honest list of what it does not close. A plan built against relaxed
  * targets always comes back with `sufficient: false`.
@@ -598,7 +598,7 @@ export function planFixes(
       targets,
     );
 
-  // Solve the real standard first. Only if the catalogue cannot reach it does the
+  // Solve the real standard first. Only if the catalog cannot reach it does the
   // search fall back to the best plan available, which reports itself as short.
   const best =
     search(strictTargets()) ?? search(relaxedTargets(evaluation, candidatesByCategory));

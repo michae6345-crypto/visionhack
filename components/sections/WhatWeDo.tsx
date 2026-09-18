@@ -6,7 +6,7 @@ import styles from "./sections.module.css";
 const STEPS = [
   {
     n: "1",
-    title: "Tell us which licences you hold",
+    title: "Tell us which licenses you hold",
     body: "SNAP, the county health permit, tobacco, ABC, scales, business tax. You type them in once, with the numbers and the dates off the certificates.",
   },
   {
@@ -34,7 +34,7 @@ export function WhatWeDo() {
         </Reveal>
         <Reveal delay={0.05}>
           <h2 className="display">
-            A small store runs on a stack of licences. Ledger keeps them from
+            A small store runs on a stack of licenses. Ledger keeps them from
             lapsing.
           </h2>
         </Reveal>

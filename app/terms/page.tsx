@@ -31,7 +31,7 @@ export default function TermsPage() {
             <h2>No affiliation, no authorization</h2>
             <p>
               <strong>{NON_AFFILIATION}</strong> A passing scorecard does not grant,
-              renew or guarantee any licence, permit or authorization. Those decisions
+              renew or guarantee any license, permit or authorization. Those decisions
               belong to the relevant authority alone.
             </p>
 

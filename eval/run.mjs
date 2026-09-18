@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 
 import { RECORDS, resolveRecord, allTags } from "./fixtures/records.mjs";
 import { isPerishableStorage } from "./fixtures/lines.mjs";
-import { replay, summarize, CATEGORIES } from "./pipeline.mjs";
+import { replay, CATEGORIES } from "./pipeline.mjs";
 import {
   byTag,
   categoryConfusion,
@@ -236,7 +236,7 @@ w("## Fixtures");
 w();
 w(`- ${fixtureCount} order records, ${syntheticCount} of them synthetic.`);
 w(
-  `- ${RECORDS.reduce((n, r) => n + r.lines.length, 0)} line items with hand-labelled ` +
+  `- ${RECORDS.reduce((n, r) => n + r.lines.length, 0)} line items with hand-labeled ` +
     "ground truth: category, variety, storage, units per pack, packs, and whether the " +
     "line can be counted at all.",
 );
@@ -406,7 +406,7 @@ w(
   "- Whether USDA would classify these products or varieties the same way. The " +
     "category and perishable labels here are our reading of the rule.",
 );
-w("- Anything about Criterion B, specialty-store treatment, or authorisation itself.");
+w("- Anything about Criterion B, specialty-store treatment, or authorization itself.");
 w();
 
 // ---------------------------------------------------------------------------

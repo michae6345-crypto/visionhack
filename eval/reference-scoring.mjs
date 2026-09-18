@@ -12,7 +12,7 @@
  * and spot-checked by hand; the harness then compares the app against those
  * literals, not against a fresh run of this file.
  *
- * Deliberately naive: plain loops, no shared helpers, no normalisation cleverness
+ * Deliberately naive: plain loops, no shared helpers, no normalization cleverness
  * beyond lower-casing a variety name. If this and lib/rules/standard.ts disagree,
  * that disagreement is the finding.
  */

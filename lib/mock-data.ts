@@ -31,7 +31,7 @@ export type ScanResult = {
   }[]
   /**
    * Summary of the solved fix plan. `sufficient` is false when the suggestion
-   * catalogue cannot close every gap, which the UI must not hide.
+   * catalog cannot close every gap, which the UI must not hide.
    */
   fixPlan?: {
     totalAddedUnits: number

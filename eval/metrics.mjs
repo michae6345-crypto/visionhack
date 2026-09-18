@@ -99,7 +99,7 @@ export function categoryConfusion(pairs, categories) {
     const expected = pair.truth.category;
     if (!expected || !matrix[expected]) continue;
     // Only lines a reader can count. An accessory food has a category and is
-    // still uncountable, so scoring its category as a miss would penalise the
+    // still uncountable, so scoring its category as a miss would penalize the
     // pipeline for applying the accessory rule correctly.
     if (pair.truth.counted !== true) continue;
     considered++;

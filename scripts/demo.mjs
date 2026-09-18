@@ -8,7 +8,7 @@
  *
  * It replays a stored model response from eval/responses/ through the real
  * pipeline: reconciliation, the pack and quantity parsers, the partition step,
- * the stocking standard, the fix optimiser and the scorecard. The only thing
+ * the stocking standard, the fix optimizer and the scorecard. The only thing
  * standing in for the live system is the model call itself, and the header says
  * which kind of response it is reading.
  */
@@ -166,7 +166,7 @@ if (scorecard.fixes.length > 0) {
   if (!plan.sufficient) {
     console.log(
       `  ${yellow("!")}  ${bold("This list is not enough to meet the standard.")} The suggestion\n` +
-        `     catalogue cannot close every gap on this record.`,
+        `     catalog cannot close every gap on this record.`,
     );
   } else {
     console.log(dim("  Solved for the fewest added stocking units, not ranked by hand."));
@@ -178,7 +178,7 @@ console.log(line("═"));
 console.log(
   dim(
     "  Self-assessment aid, not a compliance determination. Only USDA decides\n" +
-      "  whether a store is authorised. Count your own shelves before acting on this.",
+      "  whether a store is authorized. Count your own shelves before acting on this.",
   ),
 );
 console.log(line("═"));

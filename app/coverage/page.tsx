@@ -24,7 +24,7 @@ export default function CoveragePage() {
         />
         <Coverage
           ground="paper"
-          intro="Which of these apply depends on what you sell. Ledger holds the ones that do, with their renewal dates and the conditions that keep applying after the licence is granted."
+          intro="Which of these apply depends on what you sell. Ledger holds the ones that do, with their renewal dates and the conditions that keep applying after the license is granted."
         />
         <Industries />
         <CtaBand />

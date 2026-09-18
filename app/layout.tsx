@@ -10,7 +10,7 @@ const archivo = Archivo({
 });
 
 const SITE_DESCRIPTION =
-  "Ledger tracks the licences, filings and stocking rules a small retailer is judged on, and tells you which one is about to fail.";
+  "Ledger tracks the licenses, filings and stocking rules a small retailer is judged on, and tells you which one is about to fail.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ledger.vercel.app"),
@@ -37,9 +37,23 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Marks the document as scripted, before first paint.
+ *
+ * Scroll reveals need JavaScript for the trigger, so their hidden state is
+ * gated on this attribute in app/globals.css. Without it — JS off, JS broken,
+ * a crawler — nothing is ever hidden. It is set inline rather than in an effect
+ * so the gate is in place before the first frame, which is the only way to
+ * avoid content appearing and then being hidden again.
+ */
+const MARK_SCRIPTED = "document.documentElement.setAttribute('data-js','');";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={archivo.variable}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: MARK_SCRIPTED }} />
+      </head>
       <body>{children}</body>
     </html>
   );

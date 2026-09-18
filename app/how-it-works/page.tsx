@@ -23,7 +23,7 @@ const CADENCE: {
 }[] = [
   {
     when: "Day one",
-    what: "Enter the licences you hold: programme, reference number, issue date, renewal date. Photograph each certificate so the details are on file rather than in a drawer.",
+    what: "Enter the licenses you hold: programme, reference number, issue date, renewal date. Photograph each certificate so the details are on file rather than in a drawer.",
     cost: "About 10 minutes",
     who: "you",
   },
@@ -47,7 +47,7 @@ const CADENCE: {
   },
   {
     when: "90, 30 and 7 days out",
-    what: "Renewal reminders for each licence, with the filing office, the fee and what the form asks for. The 7-day one repeats daily until you mark it filed.",
+    what: "Renewal reminders for each license, with the filing office, the fee and what the form asks for. The 7-day one repeats daily until you mark it filed.",
     cost: "Automatic",
     who: "ledger",
   },
@@ -93,7 +93,7 @@ const AFTER = [
 const YOURS = [
   "Filing the renewal with the agency and paying the fee.",
   "Keeping the shelves stocked to the minimums we report.",
-  "Posting the notices and licences the programmes require.",
+  "Posting the notices and licenses the programmes require.",
   "Keeping invoices and receipts for the period each programme asks for.",
   "Answering the inspector. We give you the position; you give the answer.",
 ];
@@ -113,7 +113,7 @@ export default function HowItWorksPage() {
         <PageHeader
           eyebrow="How it works"
           title="What we do, what you do, and when."
-          intro="Compliance is a calendar. Renewal dates, a stocking position that moves with every delivery, and conditions that keep applying after the licence is granted. Here is how the work splits between us."
+          intro="Compliance is a calendar. Renewal dates, a stocking position that moves with every delivery, and conditions that keep applying after the license is granted. Here is how the work splits between us."
         />
 
         <Section ground="tint">
@@ -296,7 +296,7 @@ export default function HowItWorksPage() {
           </p>
         </Section>
 
-        <CtaBand title="Start with the licences you already hold." />
+        <CtaBand title="Start with the licenses you already hold." />
       </main>
       <Footer />
     </>

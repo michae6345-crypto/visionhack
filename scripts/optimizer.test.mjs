@@ -1,7 +1,7 @@
 /**
- * Unit tests for the fix optimiser (lib/rules/optimizer.ts).
+ * Unit tests for the fix optimizer (lib/rules/optimizer.ts).
  *
- * The claim the optimiser makes is "buy these and you meet the standard, and
+ * The claim the optimizer makes is "buy these and you meet the standard, and
  * there is no cheaper set that does". Both halves are checked here:
  *
  *   1. every plan is applied and re-scored, so "you pass" is verified, not
@@ -36,9 +36,9 @@ const { CATEGORIES, MIN_STOCKING_UNITS_PER_VARIETY } = require(
 // Brute-force oracle
 // ---------------------------------------------------------------------------
 /**
- * Every addition available to a store, derived independently of the optimiser:
+ * Every addition available to a store, derived independently of the optimizer:
  * raise a variety it already buys to the minimum, or start one from the
- * catalogue it does not carry.
+ * catalog it does not carry.
  */
 function actionSpace(lines, catalog) {
   const evaluation = evaluateStandard(lines);
@@ -72,7 +72,7 @@ function actionSpace(lines, catalog) {
 
 /**
  * Cheapest subset of the action space that makes the standard met, by exhaustive
- * enumeration. Deliberately dumb: it shares no code with the optimiser beyond
+ * enumeration. Deliberately dumb: it shares no code with the optimizer beyond
  * the scoring function they are both judged by.
  */
 function bruteForce(lines, catalog, unitCosts = null) {
@@ -112,12 +112,12 @@ function stocked(category, count, perishables = 1) {
   );
 }
 
-/** Small per-category catalogue, so the action space stays brute-forceable. */
+/** Small per-category catalog, so the action space stays brute-forceable. */
 function smallCatalog(perCategory = 2) {
   return CATEGORIES.flatMap((category) =>
     Array.from({ length: perCategory }, (_, i) => ({
       category,
-      variety: `${category} catalogue ${i + 1}`,
+      variety: `${category} catalog ${i + 1}`,
       // One shelf-stable, one perishable.
       perishable: i % 2 === 1,
     })),
@@ -149,7 +149,7 @@ test("a store that already meets the standard is told to buy nothing", () => {
 // ---------------------------------------------------------------------------
 test("topping up a variety the store already buys beats starting a new one", () => {
   // Dairy has six varieties plus one at 2 units. One added unit makes the
-  // seventh variety count; a catalogue item would cost three.
+  // seventh variety count; a catalog item would cost three.
   const lines = [
     ...stocked("dairy", 6),
     variety("dairy", "queso fresco", 2, true),
@@ -211,7 +211,7 @@ test("the perishable rule buys only the shortfall, in the cheapest category", ()
 // ---------------------------------------------------------------------------
 test("one purchase can clear a variety gap and the perishable rule together", () => {
   // Dairy is one variety short AND has no perishable; so do grains. The cheapest
-  // plan uses the perishable catalogue item in both, clearing four requirements
+  // plan uses the perishable catalog item in both, clearing four requirements
   // with two purchases.
   const lines = [
     ...stocked("dairy", REQUIRED_VARIETIES_PER_CATEGORY - 1, 0),
@@ -253,7 +253,7 @@ test("every plan, applied, makes the standard met", () => {
     ],
   ];
 
-  // Seven per category, matching the shipped catalogue, so gaps are closable.
+  // Seven per category, matching the shipped catalog, so gaps are closable.
   const catalog = smallCatalog(7);
 
   for (const [name, lines] of scenarios) {
@@ -293,13 +293,13 @@ test("minimal on random near-compliant stores, checked against brute force", () 
         );
       }
     }
-    // Two catalogue items per category keeps the action space inside 20.
+    // Two catalog items per category keeps the action space inside 20.
     const catalog = smallCatalog(2);
     const plan = planFixes(lines, catalog);
     const best = bruteForce(lines, catalog);
 
     if (best === null) {
-      // No subset passes, so the optimiser must not claim one does.
+      // No subset passes, so the optimizer must not claim one does.
       assert.equal(plan.sufficient, false, `trial ${trial}: claimed a plan that cannot exist`);
       continue;
     }
@@ -318,8 +318,8 @@ test("minimal on random near-compliant stores, checked against brute force", () 
 });
 
 // ---------------------------------------------------------------------------
-test("with a price list it minimises cost, not units", () => {
-  // Grains is one variety short. The shelf-stable catalogue item is dearer per
+test("with a price list it minimizes cost, not units", () => {
+  // Grains is one variety short. The shelf-stable catalog item is dearer per
   // unit than the perishable one, so the cheapest plan is not the first listed.
   const lines = [
     ...stocked("dairy", REQUIRED_VARIETIES_PER_CATEGORY),
@@ -350,13 +350,13 @@ test("with a price list it minimises cost, not units", () => {
 });
 
 // ---------------------------------------------------------------------------
-test("a catalogue too small to close the gap reports what is left", () => {
-  // An empty store needs seven varieties per category; this catalogue offers
+test("a catalog too small to close the gap reports what is left", () => {
+  // An empty store needs seven varieties per category; this catalog offers
   // two. The plan must still be the best available, and must not claim to pass.
   const plan = planFixes([], smallCatalog(2));
 
   assert.equal(plan.sufficient, false);
-  assert.equal(plan.actions.length, 8); // everything the catalogue has
+  assert.equal(plan.actions.length, 8); // everything the catalog has
   assert.ok(plan.unresolved.length > 0);
   assert.ok(
     plan.unresolved.some((c) => c.kind === "category-varieties"),
@@ -371,7 +371,7 @@ test("a catalogue too small to close the gap reports what is left", () => {
 });
 
 // ---------------------------------------------------------------------------
-test("an empty catalogue and an empty store produce no false promises", () => {
+test("an empty catalog and an empty store produce no false promises", () => {
   const plan = planFixes([], []);
   assert.deepEqual(plan.actions, []);
   assert.equal(plan.sufficient, false);

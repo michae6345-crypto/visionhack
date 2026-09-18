@@ -32,7 +32,7 @@ export interface ScorecardCopy {
   topUpReason(units: number, variety: string, more: number, minUnits: number, gain: string): string;
   newItemReason(pitch: string, minUnits: number, gain: string): string;
   extraUnitsReason(units: number, gain: string): string;
-  /** Fallback naming when a planned variety has no catalogue entry. */
+  /** Fallback naming when a planned variety has no catalog entry. */
   stockSuggestion(variety: string, units: number): string;
   /** " This clears the dairy variety minimum (7) and the 84-unit total." */
   clearsSuffix(phrases: string[]): string;
@@ -155,7 +155,7 @@ export type Suggestion = {
  * SEVEN PER CATEGORY IS A FLOOR, not a round number. A category with nothing in
  * it needs seven varieties, and every variety the store already carries is
  * filtered out of its own category, so a shorter list would leave gaps the
- * optimiser cannot close. It reports `sufficient: false` when that happens
+ * optimizer cannot close. It reports `sufficient: false` when that happens
  * rather than pretending a partial plan passes.
  */
 export const SUGGESTIONS: Record<Category, Suggestion[]> = {

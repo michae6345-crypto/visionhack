@@ -9,7 +9,7 @@
  * API key and no model output).
  *
  * The thresholds are the published Criterion A figures, cited in
- * docs/regulatory-basis.md. Only USDA determines whether a store is authorised;
+ * docs/regulatory-basis.md. Only USDA determines whether a store is authorized;
  * this is arithmetic against the numbers in the rule.
  *
  * Callers are expected to have applied the per-line rules already (accessory
@@ -57,7 +57,7 @@ export const STOCKING_STANDARD = {
  */
 export interface CountableLine {
   category: Category;
-  /** Free text. Lines whose variety normalises to the same key are one variety. */
+  /** Free text. Lines whose variety normalizes to the same key are one variety. */
   variety: string;
   units: number;
   perishable: boolean;
@@ -107,7 +107,7 @@ export interface CategoryEvaluation<TLine extends CountableLine = CountableLine>
 
 /**
  * A requirement the store does not currently meet. This is the machine-readable
- * form the fix optimiser solves against (lib/rules/optimizer.ts).
+ * form the fix optimizer solves against (lib/rules/optimizer.ts).
  */
 export type UnmetConstraint =
   | { kind: "category-varieties"; category: Category; required: number; found: number }

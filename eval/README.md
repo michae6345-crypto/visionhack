@@ -90,7 +90,7 @@ the shelf. A 25 lb case of loose tomatoes has no printed unit count, so a person
 scoring that record cannot count its units either; the fixture says the line
 cannot be counted, and the reason. Labelling it with a guessed unit count would
 measure the pipeline against something no reader could produce, and would reward
-guessing — the one behaviour that can tell a store it passes when it does not.
+guessing — the one behavior that can tell a store it passes when it does not.
 
 There is a circularity to watch here. The rule "no printed unit count means no
 count" is both what the fixtures label and what the parsers implement, so
