@@ -1,0 +1,184 @@
+{
+  "fixture": "22-handwritten-mixed",
+  "source": "authored",
+  "note": "Derived from the fixture, not returned by a model. Measures the pipeline after the model, never the model's own reading. See eval/authored.mjs.",
+  "generatedBy": "eval/tools/record-responses.mjs",
+  "extract": {
+    "lines": [
+      {
+        "lineText": "Milk - whole, gal",
+        "packSize": "4 ct",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "Cheddar blocks",
+        "packSize": "12 ct",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "Tortillas - flour",
+        "packSize": "12 ct",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "Pinto beans 2lb bags",
+        "packSize": "10 ct",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "Eggs lg",
+        "packSize": "15 ct",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "Tomatoes (box)",
+        "packSize": null,
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "Bananas - 2 cases",
+        "packSize": null,
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "Rice 20 lb",
+        "packSize": null,
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "CARNATION EVAP MILK 12 OZ",
+        "packSize": "24 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "PREMIUM SALTINE CRACKERS 16 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      }
+    ]
+  },
+  "classify": {
+    "items": [
+      {
+        "sourceLineText": "Milk - whole, gal",
+        "category": "dairy",
+        "variety": "whole milk",
+        "packCount": 4,
+        "quantity": 2,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Cheddar blocks",
+        "category": "dairy",
+        "variety": "cheddar cheese",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Tortillas - flour",
+        "category": "grains",
+        "variety": "flour tortillas",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Pinto beans 2lb bags",
+        "category": "protein",
+        "variety": "dried pinto beans",
+        "packCount": 10,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Eggs lg",
+        "category": "protein",
+        "variety": "eggs",
+        "packCount": 15,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Tomatoes (box)",
+        "category": "produce",
+        "variety": "tomatoes",
+        "packCount": 24,
+        "quantity": 2,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Bananas - 2 cases",
+        "category": "produce",
+        "variety": "bananas",
+        "packCount": 2,
+        "quantity": 2,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "Rice 20 lb",
+        "category": "grains",
+        "variety": "white rice",
+        "packCount": 20,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "CARNATION EVAP MILK 12 OZ",
+        "category": "dairy",
+        "variety": "evaporated milk",
+        "packCount": 24,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "PREMIUM SALTINE CRACKERS 16 OZ",
+        "category": "grains",
+        "variety": "saltine crackers",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      }
+    ]
+  }
+}

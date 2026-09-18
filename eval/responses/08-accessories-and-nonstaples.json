@@ -1,0 +1,218 @@
+{
+  "fixture": "08-accessories-and-nonstaples",
+  "source": "authored",
+  "note": "Derived from the fixture, not returned by a model. Measures the pipeline after the model, never the model's own reading. See eval/authored.mjs.",
+  "generatedBy": "eval/tools/record-responses.mjs",
+  "extract": {
+    "lines": [
+      {
+        "lineText": "SWEET CREAM BUTTER SOLIDS",
+        "packSize": "36 x 4 OZ",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "JACK LINKS ORIGINAL BEEF JERKY 3.25 OZ",
+        "packSize": "8 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "SKIPPY CREAMY PEANUT BUTTER 16.3 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "COCA COLA 12 OZ CAN",
+        "packSize": "24 CT",
+        "quantity": "4",
+        "legible": true
+      },
+      {
+        "lineText": "RED BULL 8.4 OZ",
+        "packSize": "24 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "LAYS CLASSIC CHIPS 1 OZ",
+        "packSize": "104 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "SNICKERS BAR 1.86 OZ",
+        "packSize": "48 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "MARLBORO RED CARTON",
+        "packSize": "10 PK",
+        "quantity": "6",
+        "legible": true
+      },
+      {
+        "lineText": "CLOROX BLEACH 81 OZ",
+        "packSize": "6 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "PAPER TOWELS 2 PLY",
+        "packSize": "30 ROLL",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "WHL MLK GALLON",
+        "packSize": "4/1 GAL",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "BIMBO SOFT WHITE BREAD 20 OZ",
+        "packSize": "8 CT",
+        "quantity": "2",
+        "legible": true
+      }
+    ]
+  },
+  "classify": {
+    "items": [
+      {
+        "sourceLineText": "SWEET CREAM BUTTER SOLIDS",
+        "category": "dairy",
+        "variety": "butter",
+        "packCount": 36,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": true,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "JACK LINKS ORIGINAL BEEF JERKY 3.25 OZ",
+        "category": "protein",
+        "variety": "beef jerky",
+        "packCount": 8,
+        "quantity": 2,
+        "storage": "shelf_stable",
+        "accessory": true,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "SKIPPY CREAMY PEANUT BUTTER 16.3 OZ",
+        "category": "protein",
+        "variety": "peanut butter",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "COCA COLA 12 OZ CAN",
+        "category": "produce",
+        "variety": "cola",
+        "packCount": 24,
+        "quantity": 4,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "RED BULL 8.4 OZ",
+        "category": "produce",
+        "variety": "energy drink",
+        "packCount": 24,
+        "quantity": 2,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "LAYS CLASSIC CHIPS 1 OZ",
+        "category": "grains",
+        "variety": "potato chips",
+        "packCount": 104,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "SNICKERS BAR 1.86 OZ",
+        "category": "grains",
+        "variety": "candy bar",
+        "packCount": 48,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "MARLBORO RED CARTON",
+        "category": "grains",
+        "variety": "cigarettes",
+        "packCount": 10,
+        "quantity": 6,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "CLOROX BLEACH 81 OZ",
+        "category": "grains",
+        "variety": "household bleach",
+        "packCount": 6,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "PAPER TOWELS 2 PLY",
+        "category": "grains",
+        "variety": "paper towels",
+        "packCount": 30,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": "Not one of the four staple food categories."
+      },
+      {
+        "sourceLineText": "WHL MLK GALLON",
+        "category": "dairy",
+        "variety": "whole milk",
+        "packCount": 4,
+        "quantity": 2,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "BIMBO SOFT WHITE BREAD 20 OZ",
+        "category": "grains",
+        "variety": "white bread",
+        "packCount": 8,
+        "quantity": 2,
+        "storage": "fresh",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      }
+    ]
+  }
+}

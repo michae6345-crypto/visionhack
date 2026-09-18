@@ -1,0 +1,422 @@
+{
+  "fixture": "03-dairy-short-laser",
+  "source": "authored",
+  "note": "Derived from the fixture, not returned by a model. Measures the pipeline after the model, never the model's own reading. See eval/authored.mjs.",
+  "generatedBy": "eval/tools/record-responses.mjs",
+  "extract": {
+    "lines": [
+      {
+        "lineText": "WHL MLK GALLON",
+        "packSize": "4/1 GAL",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "TILLAMOOK MED CHEDDAR BLOCK 8 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "DANNON PLAIN LOWFAT YOGURT 32 OZ",
+        "packSize": "6 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "MISSION FLR TORT SOFT TACO 10 CT",
+        "packSize": "12 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "MAHATMA X-LONG GRAIN WHITE RICE 2 LB",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "BARILLA SPAGHETTI 16 OZ",
+        "packSize": "20 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "QUAKER OLD FASHION OATS 18 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "GEN MILLS CHEERIOS 8.9 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "MASECA INST CORN MASA 4.4 LB",
+        "packSize": "10 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "BIMBO SOFT WHITE BREAD 20 OZ",
+        "packSize": "8 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "STARKIST CHUNK LT TUNA WTR 5 OZ",
+        "packSize": "48 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "GRND BEEF 80/20 1 LB CHUB",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "OSCAR MAYER BEEF FRANKS 15 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "SWANSON WHITE CHKN BRST 9.75 OZ",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "BAR-S CLASSIC BOLOGNA 12 OZ",
+        "packSize": "16 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "FRSH CHKN DRUMSTICKS FAM PK",
+        "packSize": "8 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "BUMBLE BEE SARDINES IN WTR 3.75 OZ",
+        "packSize": "18 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "BANANAS PETITE",
+        "packSize": "150 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "RUSSET POTATO 5 LB BAG",
+        "packSize": "10 CT",
+        "quantity": "2",
+        "legible": true
+      },
+      {
+        "lineText": "COOKING ONION",
+        "packSize": "16 / 3 #",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "DEL MONTE WHL KERNEL CORN 15.25 OZ",
+        "packSize": "24 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "DOLE MANDARIN ORANGE CUPS 4 CT",
+        "packSize": "12 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "LETTUCE HEAD 24 CT CELLO WRAP",
+        "packSize": "24 CT",
+        "quantity": "1",
+        "legible": true
+      },
+      {
+        "lineText": "LIMES PERSIAN",
+        "packSize": "200 CT",
+        "quantity": "1",
+        "legible": true
+      }
+    ]
+  },
+  "classify": {
+    "items": [
+      {
+        "sourceLineText": "WHL MLK GALLON",
+        "category": "dairy",
+        "variety": "whole milk",
+        "packCount": 4,
+        "quantity": 2,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "TILLAMOOK MED CHEDDAR BLOCK 8 OZ",
+        "category": "dairy",
+        "variety": "cheddar cheese",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "DANNON PLAIN LOWFAT YOGURT 32 OZ",
+        "category": "dairy",
+        "variety": "plain yogurt",
+        "packCount": 6,
+        "quantity": 2,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "MISSION FLR TORT SOFT TACO 10 CT",
+        "category": "grains",
+        "variety": "flour tortillas",
+        "packCount": 12,
+        "quantity": 2,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "MAHATMA X-LONG GRAIN WHITE RICE 2 LB",
+        "category": "grains",
+        "variety": "white rice",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "BARILLA SPAGHETTI 16 OZ",
+        "category": "grains",
+        "variety": "spaghetti",
+        "packCount": 20,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "QUAKER OLD FASHION OATS 18 OZ",
+        "category": "grains",
+        "variety": "rolled oats",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "GEN MILLS CHEERIOS 8.9 OZ",
+        "category": "grains",
+        "variety": "oat cereal",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "MASECA INST CORN MASA 4.4 LB",
+        "category": "grains",
+        "variety": "corn masa flour",
+        "packCount": 10,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "BIMBO SOFT WHITE BREAD 20 OZ",
+        "category": "grains",
+        "variety": "white bread",
+        "packCount": 8,
+        "quantity": 2,
+        "storage": "fresh",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "STARKIST CHUNK LT TUNA WTR 5 OZ",
+        "category": "protein",
+        "variety": "canned tuna",
+        "packCount": 48,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "GRND BEEF 80/20 1 LB CHUB",
+        "category": "protein",
+        "variety": "ground beef",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "OSCAR MAYER BEEF FRANKS 15 OZ",
+        "category": "protein",
+        "variety": "beef hot dogs",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "SWANSON WHITE CHKN BRST 9.75 OZ",
+        "category": "protein",
+        "variety": "canned chicken",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "BAR-S CLASSIC BOLOGNA 12 OZ",
+        "category": "protein",
+        "variety": "bologna",
+        "packCount": 16,
+        "quantity": 1,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "FRSH CHKN DRUMSTICKS FAM PK",
+        "category": "protein",
+        "variety": "chicken drumsticks",
+        "packCount": 8,
+        "quantity": 2,
+        "storage": "refrigerated",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "BUMBLE BEE SARDINES IN WTR 3.75 OZ",
+        "category": "protein",
+        "variety": "sardines",
+        "packCount": 18,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "BANANAS PETITE",
+        "category": "produce",
+        "variety": "bananas",
+        "packCount": 150,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "RUSSET POTATO 5 LB BAG",
+        "category": "produce",
+        "variety": "potatoes",
+        "packCount": 10,
+        "quantity": 2,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "COOKING ONION",
+        "category": "produce",
+        "variety": "onions",
+        "packCount": 16,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "DEL MONTE WHL KERNEL CORN 15.25 OZ",
+        "category": "produce",
+        "variety": "canned corn",
+        "packCount": 24,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "DOLE MANDARIN ORANGE CUPS 4 CT",
+        "category": "produce",
+        "variety": "mandarin oranges",
+        "packCount": 12,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "LETTUCE HEAD 24 CT CELLO WRAP",
+        "category": "produce",
+        "variety": "lettuce",
+        "packCount": 24,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      },
+      {
+        "sourceLineText": "LIMES PERSIAN",
+        "category": "produce",
+        "variety": "limes",
+        "packCount": 200,
+        "quantity": 1,
+        "storage": "shelf_stable",
+        "accessory": false,
+        "confidence": 0.93,
+        "excludeReason": null
+      }
+    ]
+  }
+}
