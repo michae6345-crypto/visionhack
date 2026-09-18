@@ -156,10 +156,26 @@ test("a store short on dairy fails, with dairy-only fixes", () => {
     assert.equal(category(result, other).varietiesFound, 7, other);
   }
 
-  assert.equal(result.fixes.length, 2);
+  // The fix list is the whole gap, not a preview of it: three varieties short
+  // means three fixes, and the plan says it is enough.
+  assert.equal(result.fixes.length, 3);
   assert.ok(result.fixes.every((f) => f.category === "dairy"));
   assert.match(result.fixes[0].whyItHelps, /5 of 7 varieties/);
   assert.match(result.fixes[1].whyItHelps, /6 of 7 varieties/);
+  assert.match(result.fixes[2].whyItHelps, /7 of 7 varieties/);
+  assert.deepEqual(result.fixPlan, {
+    totalAddedUnits: 9, // 3 new varieties x the 3-unit minimum
+    totalCost: null, // no price list in the repo
+    objective: "units",
+    sufficient: true,
+  });
+  // The last fix is the one that clears the category, and it says so.
+  assert.deepEqual(result.fixes[2].clears, [
+    "the dairy minimum of 7 varieties",
+    "the dairy minimum of 21 units",
+    "the 84-unit total",
+  ]);
+  assert.ok(result.fixes.slice(0, 2).every((f) => f.clears.length === 0));
   // Never suggest a variety that's already on the shelf.
   for (const fix of result.fixes) {
     for (const { variety } of dairy.items) {
@@ -325,19 +341,23 @@ test("sample produce invoice, read as 1 unit per case, gives the expected result
   assert.equal(result.perishableCategoriesMet, 1);
   assert.equal(result.overallStatus, "fail");
 
-  // Best produce fix: top up a variety the store already buys.
+  // Best produce fix: one unit, topping up a variety the store already buys.
+  // Produce is six varieties short of nothing — it has six and a 2-unit
+  // near miss — so a single unit is the whole of its gap.
   const produceFixes = result.fixes.filter((f) => f.category === "produce");
   assert.equal(produceFixes.length, 1);
   assert.equal(produceFixes[0].itemSuggestion, "Select Cucumber bushel (stock 1 more)");
+  assert.equal(produceFixes[0].addedUnits, 1);
   assert.match(produceFixes[0].whyItHelps, /^You already stock 2 units of cucumbers/);
   assert.match(produceFixes[0].whyItHelps, /7 of 7 varieties/);
 
-  // Empty categories get 2 fixes each, led by a perishable one.
+  // The three empty categories need seven varieties each, and the plan buys
+  // exactly that: 21 new varieties at 3 units, plus the one cucumber unit.
   for (const empty of ["dairy", "grains", "protein"]) {
-    const fixes = result.fixes.filter((f) => f.category === empty);
-    assert.equal(fixes.length, 2, empty);
-    assert.match(fixes[0].whyItHelps, /perishable/, empty);
+    assert.equal(result.fixes.filter((f) => f.category === empty).length, 7, empty);
   }
+  assert.equal(result.fixPlan.totalAddedUnits, 64);
+  assert.equal(result.fixPlan.sufficient, true);
 });
 
 // ---------------------------------------------------------------------------
@@ -352,8 +372,15 @@ test("a store that only misses the perishable rule still gets fixes", () => {
 
   assert.equal(result.perishableCategoriesMet, 1);
   assert.equal(result.overallStatus, "fail");
-  assert.deepEqual(result.fixes.map((f) => f.category), ["dairy", "grains", "protein"]);
+  // Three categories lack a perishable but the rule only asks for three of four,
+  // so two additions clear it. Suggesting a third would be advice to overbuy.
+  assert.equal(result.fixes.length, 2);
+  assert.equal(new Set(result.fixes.map((f) => f.category)).size, 2);
   assert.ok(result.fixes.every((f) => /perishable/.test(f.whyItHelps)));
+  assert.equal(result.fixPlan.totalAddedUnits, 6);
+  assert.equal(result.fixPlan.sufficient, true);
+  // Only the second one actually clears the rule.
+  assert.deepEqual(result.fixes[1].clears, ["the perishable rule, 3 of 4 categories"]);
 });
 
 // ---------------------------------------------------------------------------
@@ -383,7 +410,11 @@ test("no items gives an all-zero failing scorecard", () => {
   assert.equal(result.overallStatus, "fail");
   assert.equal(result.totalUnits, 0);
   assert.equal(result.categories.length, 4);
-  assert.equal(result.fixes.length, 8);
+  // Nothing on the shelf means the plan is the standard itself: four categories
+  // x seven varieties x three units.
+  assert.equal(result.fixes.length, 28);
+  assert.equal(result.fixPlan.totalAddedUnits, 84);
+  assert.equal(result.fixPlan.sufficient, true);
 });
 
 // ---------------------------------------------------------------------------
@@ -427,10 +458,17 @@ test("the Spanish scorecard has the same numbers, with Spanish labels and fixes"
   );
 
   const [firstDairy] = es.fixes.filter((f) => f.category === "dairy");
-  assert.equal(firstDairy.itemSuggestion, "Queso cottage Daisy, 16 oz (surta 3)");
+  assert.equal(firstDairy.itemSuggestion, "Leche evaporada Carnation, lata de 12 oz (surta 3)");
   assert.equal(
     firstDairy.whyItHelps,
-    "Un básico refrigerado de bajo costo. Surtir 3 lleva los lácteos a 1 de 7 variedades y agrega el producto perecedero que les falta a los lácteos.",
+    "Se conserva sin refrigeración y no ocupa espacio en el refrigerador. Surtir 3 lleva los lácteos a 1 de 7 variedades.",
+  );
+  // The requirement each fix clears is reported in Spanish too.
+  const clearing = es.fixes.filter((f) => f.clears.length > 0);
+  assert.ok(clearing.length > 0);
+  assert.ok(
+    clearing.every((f) => f.clears.every((phrase) => /^(el|la)\s/.test(phrase))),
+    JSON.stringify(clearing.map((f) => f.clears)),
   );
 
   // No English template text leaks into Spanish fixes.
@@ -449,8 +487,12 @@ test("a Spanish store that only misses the perishable rule gets Spanish fixes", 
   ]);
   const es = buildScanResult(items, "Test Store", SCAN_DATE, "es");
 
-  assert.deepEqual(es.fixes.map((f) => f.category), ["dairy", "grains", "protein"]);
-  assert.match(es.fixes[0].whyItHelps, /le da a los lácteos un producto perecedero, necesario en 3 de 4 categorías\.$/);
+  // Two categories, same as the English plan — the rule asks for three of four.
+  assert.equal(es.fixes.length, 2);
+  assert.match(
+    es.fixes[0].whyItHelps,
+    /le da a (los|las) [^.]+ un producto perecedero, necesario en 3 de 4 categorías\.$/,
+  );
 });
 
 test("every fix suggestion has its own Spanish text", () => {

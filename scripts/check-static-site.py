@@ -7,7 +7,7 @@ that would quietly break it are checked here and in CI:
 - every local asset a page references actually exists;
 - no page depends on JavaScript to become readable;
 - the scan demo's saved result still scores the way the rule engine would; and
-- the thresholds in site/assets/app.js still match lib/rule-engine.ts.
+- the thresholds in site/assets/app.js still match lib/rules/standard.ts.
 
     python3 scripts/check-static-site.py
 """
@@ -60,7 +60,7 @@ check(".js .reveal{opacity:0" in css,
 # Thresholds agree with the rule engine
 # --------------------------------------------------------------------------
 app = (SITE / "assets" / "app.js").read_text(encoding="utf-8")
-engine = (ROOT / "lib" / "rule-engine.ts").read_text(encoding="utf-8")
+engine = (ROOT / "lib" / "rules" / "standard.ts").read_text(encoding="utf-8")
 
 
 def ts_const(name: str) -> int:
@@ -80,7 +80,7 @@ for js_name, ts_name in [
     ("perishableCategories", "REQUIRED_PERISHABLE_CATEGORIES"),
 ]:
     check(js_rule(js_name) == ts_const(ts_name),
-          f"app.js RULES.{js_name}={js_rule(js_name)} but lib/rule-engine.ts "
+          f"app.js RULES.{js_name}={js_rule(js_name)} but lib/rules/standard.ts "
           f"{ts_name}={ts_const(ts_name)}")
 
 # --------------------------------------------------------------------------

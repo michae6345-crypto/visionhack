@@ -20,7 +20,25 @@ export type ScanResult = {
   totalUnits: number // required: 84
   perishableCategoriesMet: number // required: 3 of 4
   categories: CategoryStatus[]
-  fixes: { category: Category; itemSuggestion: string; whyItHelps: string }[]
+  fixes: {
+    category: Category
+    itemSuggestion: string
+    whyItHelps: string
+    /** Stocking units to add. Solved by lib/rules/optimizer.ts. */
+    addedUnits?: number
+    /** Requirements this one purchase clears outright, in plain words. */
+    clears?: string[]
+  }[]
+  /**
+   * Summary of the solved fix plan. `sufficient` is false when the suggestion
+   * catalogue cannot close every gap, which the UI must not hide.
+   */
+  fixPlan?: {
+    totalAddedUnits: number
+    totalCost: number | null
+    objective: 'units' | 'cost'
+    sufficient: boolean
+  }
 }
 
 // Demo scenario: Dairy is short (4 of 7 varieties), everything else passes.
@@ -88,21 +106,36 @@ export const MOCK_RESULT: ScanResult = {
       ],
     },
   ],
+  // Three varieties short of seven, so the plan is three varieties at the 3-unit
+  // minimum. Only the last one crosses a threshold, which is why only it clears
+  // anything — the same attribution lib/rules/optimizer.ts produces.
   fixes: [
     {
       category: 'dairy',
       itemSuggestion: 'Carnation Evaporated Milk, 12 oz can (stock 3)',
       whyItHelps: 'Shelf-stable and under $2 a can. Adds a 5th dairy variety with no fridge space.',
+      addedUnits: 3,
+      clears: [],
     },
     {
       category: 'dairy',
       itemSuggestion: 'Kraft Singles American Cheese, 12 ct (stock 3)',
       whyItHelps: 'A different cheese variety from cheddar, so it counts as a 6th dairy variety.',
+      addedUnits: 3,
+      clears: [],
     },
     {
       category: 'dairy',
       itemSuggestion: 'Daisy Cottage Cheese, 16 oz (stock 3)',
       whyItHelps: 'Gets Dairy to 7 varieties and 23 units, clearing both dairy minimums.',
+      addedUnits: 3,
+      clears: ['the dairy minimum of 7 varieties', 'the dairy minimum of 21 units'],
     },
   ],
+  fixPlan: {
+    totalAddedUnits: 9,
+    totalCost: null, // no price list in this repository
+    objective: 'units',
+    sufficient: true,
+  },
 }
