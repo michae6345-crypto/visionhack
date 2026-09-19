@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "smoke": "node scripts/smoke-scan.mjs",
-    "test": "tsc -p tsconfig.smoke.json && node --test scripts/rules.test.mjs scripts/rule-engine.test.mjs scripts/pipeline.test.mjs scripts/store.test.mjs scripts/calendar.test.mjs scripts/ui-copy.test.mjs"
+    "test": "tsc -p tsconfig.smoke.json && node --test scripts/rules.test.mjs scripts/standard.test.mjs scripts/optimizer.test.mjs scripts/rule-engine.test.mjs scripts/pipeline.test.mjs scripts/store.test.mjs scripts/calendar.test.mjs scripts/ui-copy.test.mjs scripts/eval-metrics.test.mjs",
+    "eval": "tsc -p tsconfig.smoke.json && node eval/run.mjs",
+    "eval:live": "tsc -p tsconfig.smoke.json && node eval/run.mjs --live",
+    "eval:images": "node eval/render.mjs",
+    "demo": "tsc -p tsconfig.smoke.json && node scripts/demo.mjs"
   },
   "dependencies": {
     "motion": "^13.2.0",
@@ -20,13 +24,11 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
-    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.5.0",
     "postcss": "^8.5.28",
-    "tailwindcss": "^4.3.3",
     "typescript": "^5.6.0"
   }
 }

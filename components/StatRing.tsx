@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
+import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import styles from "./StatRing.module.css";
 
 interface StatRingProps {
@@ -22,11 +23,24 @@ const DURATION = 0.7;
  * the dashboard. Animating only on first view covered the first case and broke
  * the second: a scan that moved readiness from 63 to 50 snapped without the
  * drop ever being visible, which is the one number an owner is watching.
+ *
+ * It starts AT the target rather than at zero, so the server-rendered ring reads
+ * the true percentage. A ring that says 0% next to "3 of 4 categories meet the
+ * threshold" is not an unfinished animation to whoever is reading it: it is a
+ * store being told it is failing.
  */
 function useTween(target: number, active: boolean): number {
-  const [value, setValue] = useState(0);
-  const from = useRef(0);
+  const [value, setValue] = useState(target);
+  const from = useRef(target);
   const reduce = useReducedMotion();
+
+  useIsomorphicLayoutEffect(() => {
+    if (reduce) return;
+    // Client only, before the first paint: rewind so there is something to play.
+    from.current = 0;
+    setValue(0);
+    // Mount only.
+  }, []);
 
   useEffect(() => {
     if (!active) return;

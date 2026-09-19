@@ -17,7 +17,23 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
-      # The scoring rules are pure functions — these run with NO API key, so a
-      # prompt edit can never silently regress them.
+
+      # The scoring rules are pure functions and these run with NO API key, so a
+      # prompt edit can never silently move a threshold.
       - run: npm test
+
+      # The eval replays stored responses through the shipped pipeline. It fails
+      # on an overcount, a false pass, or any category row that disagrees with
+      # the hand scoring, and it rewrites eval/RESULTS.md.
+      - run: npm run eval
+
+      # RESULTS.md is committed so a reviewer can read the numbers without
+      # running anything. If the run above changed it, the committed copy
+      # described different code, which is worse than having no numbers at all.
+      - name: eval/RESULTS.md is up to date
+        run: git diff --exit-code -- eval/RESULTS.md
+
+      # The keyless path a reviewer is told to use has to keep working.
+      - run: npm run demo
+
       - run: npm run build

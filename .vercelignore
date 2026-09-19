@@ -1,11 +1,10 @@
-# Design and reference material that ships with the repo but never needs to be
-# in the build bundle. Adrian and Arthur drop assets into these folders while a
-# deploy is running; keeping them out means a dropped PNG cannot slow or break
-# the build.
+# Design and reference material that ships with the repo but never belongs in
+# the build bundle. Nothing here is imported by the app, so a dropped asset
+# cannot slow or break a deploy.
 brand/
 docs/
+eval/
 fixtures/
+site/
 *.md
 !README.md
-devpost-screenshots/
-Ledger-Demo-Prep.docx

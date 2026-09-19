@@ -420,7 +420,7 @@ export function sampleStore(): Store {
       tobacco: {
         values: { stateLicense: "CDTFA-104773", cityPermitDue: inDays(-9) },
         done: [1, 2, 3],
-        note: "City permit lapsed. State licence is current.",
+        note: "City permit lapsed. State license is current.",
       },
       scale: { values: { deviceCount: "1 deli scale", registrationDue: inDays(188) }, done: [0, 1, 2] },
       businessTax: {

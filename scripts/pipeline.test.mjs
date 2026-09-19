@@ -742,7 +742,7 @@ test("a truncated tool call says so instead of blaming the schema", async () => 
 });
 
 // ---------------------------------------------------------------------------
-// Errors — unchanged behaviour
+// Errors — unchanged behavior
 // ---------------------------------------------------------------------------
 test("a missing key fails as server_misconfigured before any request", async () => {
   const real = global.fetch;

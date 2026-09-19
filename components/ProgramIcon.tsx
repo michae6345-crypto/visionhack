@@ -73,7 +73,7 @@ const ART: Record<string, React.ReactNode> = {
       <rect x="2.2" y="16.4" width="19.6" height="2.6" rx="1.3" fill={C.slate} />
     </>
   ),
-  // Bottle with a licence band.
+  // Bottle with a license band.
   ABC: (
     <>
       <path d="M9.2 2.6h5.6v3.6l2 3v11a1.8 1.8 0 0 1-1.8 1.8H9a1.8 1.8 0 0 1-1.8-1.8v-11l2-3z" fill={C.green} />

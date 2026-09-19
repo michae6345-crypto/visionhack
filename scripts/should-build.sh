@@ -20,7 +20,7 @@ if [ -z "$changed" ]; then
 fi
 
 # Anything outside these paths means the build is real.
-if echo "$changed" | grep -qvE '^(brand/|docs/|fixtures/|[^/]*\.md$)'; then
+if echo "$changed" | grep -qvE '^(brand/|docs/|eval/|fixtures/|site/|[^/]*\.md$)'; then
   echo "Source changed — building."
   exit 1
 fi

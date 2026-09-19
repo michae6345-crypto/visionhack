@@ -23,6 +23,7 @@ import {
   varietyQualifies,
   type Category,
 } from "./constants";
+import { varietyKey } from "./standard";
 import type { ExcludedItem, ScanItem, VarietyCountsByCategory } from "../types";
 import type { ClassifiedItem } from "../vision/schemas";
 
@@ -110,6 +111,10 @@ function unknownUnitsReason(quantity: number | null, packCount: number | null): 
  * RULE 2 + RULE 4 — a variety needs at least the minimum stocking units to
  * count at all, and the resulting counts round down.
  *
+ * lib/rules/standard.ts computes the same totals on its way to a verdict; both
+ * group varieties with the shared varietyKey, so the two cannot disagree about
+ * what counts as the same variety. The tests assert the numbers match.
+ *
  * Accessory foods contribute 0 toward any variety count (RULE 1), so they are
  * skipped entirely here rather than contributing a zero-unit variety.
  */
@@ -121,7 +126,7 @@ export function countQualifyingVarieties(items: ScanItem[]): VarietyCountsByCate
     if (item.accessory) continue; // RULE 1
     const byVariety = totals.get(item.category);
     if (!byVariety) continue;
-    const key = item.variety.trim().toLowerCase();
+    const key = varietyKey(item.variety);
     // Unrelated lines with a blank variety would otherwise total as one variety.
     if (!key) continue;
     byVariety.set(key, (byVariety.get(key) ?? 0) + item.stockingUnits);

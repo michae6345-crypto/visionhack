@@ -1,16 +1,17 @@
 /**
- * Rule engine (Role C): scores the counted items from POST /api/scan against
- * the configured Criterion A stocking thresholds and builds the ScanResult
- * scorecard, fix list included.
+ * Turns the counted items from POST /api/scan into the ScanResult scorecard the
+ * UI renders, in English or Spanish.
  *
- * Pure and synchronous, so it is unit-tested with no API key (`npm test`).
+ * This file is presentation. The arithmetic that decides pass or fail lives in
+ * lib/rules/standard.ts, and the fix list is solved in lib/rules/optimizer.ts;
+ * both are pure and unit-tested on their own with no model in the loop. What is
+ * left here is mapping scan items onto countable lines, attaching labels, and
+ * writing the fix sentences.
  *
  * Per-item rules (accessory foods, minimum units per variety, rounding) come
- * from lib/rules/constants.ts rather than being re-implemented here, so the
- * scorecard can never disagree with the `varietyCounts` the route returns next
- * to it. When unsure, undercount.
- *
- * Labels and fix text come from lib/scorecard-copy.ts, in English or Spanish.
+ * from lib/rules/constants.ts rather than being reimplemented, so the scorecard
+ * cannot disagree with the `varietyCounts` the route returns next to it. When
+ * unsure, undercount.
  */
 import type { CategoryStatus, ScanResult } from "./mock-data";
 import {
@@ -21,32 +22,41 @@ import {
   floorVarietyCount,
   isAccessoryFood,
   isPeanutButter,
-  varietyQualifies,
   type Category,
 } from "./rules/constants";
-import { SCORECARD_COPY, SUGGESTIONS, type Locale, type Suggestion } from "./scorecard-copy";
+import {
+  planFixes,
+  type CatalogItem,
+  type FixPlan,
+  type OptimizeOptions,
+} from "./rules/optimizer";
+import {
+  REQUIRED_PERISHABLE_CATEGORIES,
+  REQUIRED_TOTAL_UNITS,
+  REQUIRED_UNITS_PER_CATEGORY,
+  REQUIRED_VARIETIES_PER_CATEGORY,
+  evaluateStandard,
+  varietyKey,
+  type CountableLine,
+  type UnmetConstraint,
+} from "./rules/standard";
+import { SCORECARD_COPY, SUGGESTIONS, type Locale } from "./scorecard-copy";
 import type { ScanItem } from "./types";
 
 type CountedItem = CategoryStatus["items"][number];
 type Fix = ScanResult["fixes"][number];
 
-// ---------------------------------------------------------------------------
-// Scorecard minimums
-// ---------------------------------------------------------------------------
 /**
- * Varieties and perishables decide pass/fail. The unit minimums already follow
- * from them (7 varieties × 3 units = 21, 4 categories × 21 = 84) and are
- * checked anyway so that stays true if any one number changes.
- *
- * Regulatory sources and the limits of this invoice-based estimate are
- * documented in docs/regulatory-basis.md.
+ * Thresholds are defined in lib/rules/standard.ts and re-exported here because
+ * lib/compliance.ts, lib/ui-copy.ts and the static fallback checker all read
+ * them from this module.
  */
-export const REQUIRED_VARIETIES_PER_CATEGORY = 7;
-export const REQUIRED_UNITS_PER_CATEGORY = 21;
-export const REQUIRED_TOTAL_UNITS = 84;
-export const REQUIRED_PERISHABLE_CATEGORIES = 3;
-
-const MAX_FIXES_PER_CATEGORY = 2;
+export {
+  REQUIRED_PERISHABLE_CATEGORIES,
+  REQUIRED_TOTAL_UNITS,
+  REQUIRED_UNITS_PER_CATEGORY,
+  REQUIRED_VARIETIES_PER_CATEGORY,
+};
 
 /**
  * `scanDate` is the calendar date here, not on the server. Vercel runs in UTC,
@@ -54,21 +64,18 @@ const MAX_FIXES_PER_CATEGORY = 2;
  */
 export const SCAN_DATE_TIME_ZONE = "America/Los_Angeles";
 
+/** A countable line that still knows which invoice line it came from. */
+interface ScoredLine extends CountableLine {
+  name: string;
+}
+
 // ---------------------------------------------------------------------------
 // Scoring
 // ---------------------------------------------------------------------------
 /**
- * Same normalization as countQualifyingVarieties in lib/rules/partition.ts.
- * The tests assert the two agree, so change both or neither.
- */
-function varietyKey(variety: string): string {
-  return variety.trim().toLowerCase();
-}
-
-/**
  * Whole stocking units an item contributes. partitionClassifiedItems already
- * applies these rules; they are re-checked because seed data and future
- * callers may not go through it.
+ * applies these rules; they are re-checked because seed data and direct callers
+ * may not go through it.
  */
 function countableUnits(item: ScanItem): number {
   // RULE 1 — accessory foods count for nothing.
@@ -80,52 +87,30 @@ function countableUnits(item: ScanItem): number {
   return floorVarietyCount(item.stockingUnits);
 }
 
-function sumUnits(items: CountedItem[]): number {
-  return items.reduce((sum, item) => sum + item.units, 0);
-}
-
-/** A variety the store already buys, but below the minimum stocking units. */
-type NearMiss = CountedItem;
-
-interface CategoryScore {
-  status: CategoryStatus;
-  nearMisses: NearMiss[];
-}
-
-function scoreCategory(category: Category, items: CountedItem[], locale: Locale): CategoryScore {
-  const byVariety = new Map<string, CountedItem[]>();
+/** Scan items as countable lines, dropping everything that counts for nothing. */
+function toScoredLines(items: readonly ScanItem[]): ScoredLine[] {
+  const lines: ScoredLine[] = [];
   for (const item of items) {
-    const key = varietyKey(item.variety);
-    const group = byVariety.get(key);
-    if (group) group.push(item);
-    else byVariety.set(key, [item]);
+    const units = countableUnits(item);
+    // A blank variety cannot be told apart from other lines, so it never counts.
+    if (units === 0 || !varietyKey(item.variety)) continue;
+    lines.push({
+      name: item.description,
+      category: categoryForKnownFood(item.category, item.variety, item.description),
+      variety: item.variety.trim(),
+      units,
+      perishable: computePerishable(item.storage),
+    });
   }
+  return lines;
+}
 
-  const counted: CountedItem[] = [];
-  const nearMisses: NearMiss[] = [];
-  let varietiesFound = 0;
-  for (const group of byVariety.values()) {
-    const units = sumUnits(group);
-    // RULE 2 — a variety below the minimum does not count at all, and neither do its units.
-    if (varietyQualifies(units)) {
-      varietiesFound++;
-      counted.push(...group);
-    } else {
-      const representative = group.find((item) => item.perishable) ?? group[0];
-      nearMisses.push({ ...representative, units });
-    }
-  }
-
+function toCountedItem(line: ScoredLine): CountedItem {
   return {
-    status: {
-      category,
-      label: SCORECARD_COPY[locale].categoryLabels[category],
-      varietiesFound,
-      unitsFound: sumUnits(counted),
-      hasPerishable: counted.some((item) => item.perishable),
-      items: counted,
-    },
-    nearMisses,
+    name: line.name,
+    variety: line.variety,
+    units: line.units,
+    perishable: line.perishable,
   };
 }
 
@@ -133,54 +118,45 @@ function scoreCategory(category: Category, items: CountedItem[], locale: Locale)
  * Builds the scorecard from `ScanSuccess.items`. Never pass `excluded` lines:
  * they were dropped precisely because they must not count.
  *
- * `now` is injectable for tests. `locale` only changes labels and fix text;
- * the numbers, items and fix order are the same in every language.
+ * `now` is injectable for tests. `locale` only changes labels and fix text; the
+ * numbers, items and fix order are the same in every language.
  */
 export function buildScanResult(
   items: ScanItem[],
   storeName: string,
   now: Date = new Date(),
   locale: Locale = "en",
+  options: OptimizeOptions = {},
 ): ScanResult {
-  const byCategory = new Map<Category, CountedItem[]>(CATEGORIES.map((c) => [c, []]));
-  for (const item of items) {
-    const category = categoryForKnownFood(item.category, item.variety, item.description);
-    const bucket = byCategory.get(category);
-    const units = countableUnits(item);
-    // A blank variety can't be told apart from other lines, so it never counts.
-    if (!bucket || units === 0 || !varietyKey(item.variety)) continue;
-    bucket.push({
-      name: item.description,
-      variety: item.variety.trim(),
-      units,
-      perishable: computePerishable(item.storage),
-    });
-  }
+  const lines = toScoredLines(items);
+  const evaluation = evaluateStandard(lines);
+  const copy = SCORECARD_COPY[locale];
 
-  const scores = CATEGORIES.map((category) =>
-    scoreCategory(category, byCategory.get(category) ?? [], locale),
-  );
-  const categories = scores.map((score) => score.status);
-  const totalUnits = categories.reduce((sum, c) => sum + c.unitsFound, 0);
-  const perishableCategoriesMet = categories.filter((c) => c.hasPerishable).length;
+  const categories: CategoryStatus[] = evaluation.categories.map((category) => ({
+    category: category.category,
+    label: copy.categoryLabels[category.category],
+    varietiesFound: category.varietiesCounted,
+    unitsFound: category.unitsCounted,
+    hasPerishable: category.hasPerishable,
+    items: category.qualifying.flatMap((variety) => variety.lines.map(toCountedItem)),
+  }));
 
-  const passes =
-    categories.every(
-      (c) =>
-        c.varietiesFound >= REQUIRED_VARIETIES_PER_CATEGORY &&
-        c.unitsFound >= REQUIRED_UNITS_PER_CATEGORY,
-    ) &&
-    totalUnits >= REQUIRED_TOTAL_UNITS &&
-    perishableCategoriesMet >= REQUIRED_PERISHABLE_CATEGORIES;
+  const plan = planFixes(lines, catalogFrom(SUGGESTIONS), options);
 
   return {
     storeName,
     scanDate: formatDate(now),
-    overallStatus: passes ? "pass" : "fail",
-    totalUnits,
-    perishableCategoriesMet,
+    overallStatus: evaluation.meets ? "pass" : "fail",
+    totalUnits: evaluation.totalUnits,
+    perishableCategoriesMet: evaluation.perishableCategories,
     categories,
-    fixes: scores.flatMap((score) => categoryFixes(score, perishableCategoriesMet, locale)),
+    fixes: renderFixes(plan, evaluation, lines, locale),
+    fixPlan: {
+      totalAddedUnits: plan.totalAddedUnits,
+      totalCost: plan.totalCost,
+      objective: plan.objective,
+      sufficient: plan.sufficient,
+    },
   };
 }
 
@@ -199,73 +175,159 @@ function formatDate(date: Date): string {
 // ---------------------------------------------------------------------------
 // Fix list
 // ---------------------------------------------------------------------------
-/**
- * Looser than varietyKey, and used only to avoid suggesting something the
- * store already carries: "canned salmon" vs "salmon", "tomatoes" vs "tomato".
- */
-function looseVarietyKey(variety: string): string {
-  return varietyKey(variety)
-    .replace(/^(canned|fresh|frozen|dried)\s+/, "")
-    .replace(/(?<=o)es$|s$/, "");
+function catalogFrom(suggestions: typeof SUGGESTIONS): CatalogItem[] {
+  return CATEGORIES.flatMap((category) =>
+    suggestions[category].map((suggestion) => ({
+      category,
+      variety: suggestion.variety,
+      perishable: suggestion.perishable,
+    })),
+  );
 }
 
-type Pick = { kind: "top-up"; nearMiss: NearMiss } | { kind: "new"; suggestion: Suggestion };
-
-function categoryFixes(
-  { status, nearMisses }: CategoryScore,
-  perishableCategoriesMet: number,
+/**
+ * Writes one sentence per action in the plan. The plan decides what to buy and
+ * which requirement each purchase clears; this only puts it into words.
+ */
+function renderFixes(
+  plan: FixPlan,
+  evaluation: ReturnType<typeof evaluateStandard<ScoredLine>>,
+  lines: readonly ScoredLine[],
   locale: Locale,
 ): Fix[] {
-  const { category } = status;
   const copy = SCORECARD_COPY[locale];
-  const varietiesShort = REQUIRED_VARIETIES_PER_CATEGORY - status.varietiesFound;
-  const perishableShort =
-    !status.hasPerishable && perishableCategoriesMet < REQUIRED_PERISHABLE_CATEGORIES;
-  // A category with enough varieties still gets one fix when it's the reason the
-  // store misses the perishable rule. Otherwise a failing store could see no fixes.
-  const fixCount =
-    varietiesShort > 0 ? Math.min(varietiesShort, MAX_FIXES_PER_CATEGORY) : perishableShort ? 1 : 0;
-  if (fixCount === 0) return [];
+  const suggestionText = new Map<string, (typeof SUGGESTIONS)[Category][number]>(
+    CATEGORIES.flatMap((category) =>
+      SUGGESTIONS[category].map(
+        (suggestion) =>
+          [`${category}:${varietyKey(suggestion.variety)}`, suggestion] as [
+            string,
+            (typeof SUGGESTIONS)[Category][number],
+          ],
+      ),
+    ),
+  );
+  // A top-up names the line the store already buys, preferring a perishable one
+  // when the same variety arrives both ways.
+  const lineNames = new Map<string, string>();
+  for (const line of lines) {
+    const key = `${line.category}:${varietyKey(line.variety)}`;
+    if (!lineNames.has(key) || line.perishable) lineNames.set(key, line.name);
+  }
 
-  const needsPerishable = !status.hasPerishable;
-  const carried = new Set(
-    [...status.items, ...nearMisses].map((item) => looseVarietyKey(item.variety)),
+  const varieties = new Map(
+    evaluation.categories.map((c) => [c.category, c.varietiesCounted] as const),
+  );
+  const shortOnVarieties = new Set(
+    evaluation.categories.filter((c) => c.varietiesShort > 0).map((c) => c.category),
+  );
+  const shortOnUnits = new Set(
+    evaluation.categories.filter((c) => c.unitsShort > 0).map((c) => c.category),
+  );
+  const perishableCategories = new Set(
+    evaluation.categories.filter((c) => c.hasPerishable).map((c) => c.category),
   );
 
-  // Near-misses first: the store already buys them, so the fix is just stocking more.
-  const picks: Pick[] = [
-    ...nearMisses
-      .filter((nearMiss) => !needsPerishable || nearMiss.perishable)
-      .sort((a, b) => b.units - a.units)
-      .map((nearMiss): Pick => ({ kind: "top-up", nearMiss })),
-    ...SUGGESTIONS[category]
-      .filter((s) => (!needsPerishable || s.perishable) && !carried.has(looseVarietyKey(s.variety)))
-      .map((suggestion): Pick => ({ kind: "new", suggestion })),
-  ];
+  return plan.actions.map((action) => {
+    const { category } = action;
+    const key = `${category}:${action.key}`;
+    const suppliesPerishable = action.perishable && !perishableCategories.has(category);
 
-  return picks.slice(0, fixCount).map((pick, i) => {
-    let gain =
-      varietiesShort > 0
-        ? copy.varietyGain(category, status.varietiesFound + i + 1, REQUIRED_VARIETIES_PER_CATEGORY)
-        : copy.perishableGain(category, REQUIRED_PERISHABLE_CATEGORIES, CATEGORIES.length);
-    if (varietiesShort > 0 && perishableShort && i === 0) {
-      gain += copy.addsMissingPerishable(category);
+    // Say what this purchase is for. A category that already has its seven
+    // varieties is not being taken to an eighth: the pick is there to supply a
+    // missing perishable or to close the 84-unit total, and the sentence says so.
+    let gain: string;
+    if (action.kind === "extra-units") {
+      gain = shortOnUnits.has(category)
+        ? copy.unitGain(category, REQUIRED_UNITS_PER_CATEGORY)
+        : copy.towardTotalGain(action.categoryUnitsGained, REQUIRED_TOTAL_UNITS);
+    } else {
+      const reached = (varieties.get(category) ?? 0) + 1;
+      varieties.set(category, reached);
+      if (shortOnVarieties.has(category) && reached <= REQUIRED_VARIETIES_PER_CATEGORY) {
+        gain = copy.varietyGain(category, reached, REQUIRED_VARIETIES_PER_CATEGORY);
+      } else if (suppliesPerishable) {
+        gain = copy.perishableGain(
+          category,
+          REQUIRED_PERISHABLE_CATEGORIES,
+          CATEGORIES.length,
+        );
+      } else {
+        gain = copy.towardTotalGain(action.categoryUnitsGained, REQUIRED_TOTAL_UNITS);
+      }
     }
 
-    if (pick.kind === "top-up") {
-      const { name, variety, units } = pick.nearMiss;
-      const more = MIN_STOCKING_UNITS_PER_VARIETY - units;
+    if (suppliesPerishable) {
+      perishableCategories.add(category);
+      // Already the whole point of the sentence when perishableGain was used.
+      if (!gain.includes(copy.perishableGain(category, REQUIRED_PERISHABLE_CATEGORIES, CATEGORIES.length))) {
+        gain += copy.addsMissingPerishable(category);
+      }
+    }
+
+    const suffix = clearsSuffix(action.clears, locale);
+
+    if (action.kind === "new-variety") {
+      const suggestion = suggestionText.get(key);
+      const text = suggestion?.[locale];
       return {
         category,
-        itemSuggestion: copy.topUpSuggestion(name, more),
-        whyItHelps: copy.topUpReason(units, variety.toLowerCase(), more, MIN_STOCKING_UNITS_PER_VARIETY, gain),
+        itemSuggestion: text?.itemSuggestion ?? copy.stockSuggestion(action.variety, action.addedUnits),
+        whyItHelps:
+          copy.newItemReason(text?.pitch ?? "", MIN_STOCKING_UNITS_PER_VARIETY, gain) + suffix,
+        addedUnits: action.addedUnits,
+        clears: action.clears.map((c) => constraintPhrase(c, locale)),
       };
     }
-    const text = pick.suggestion[locale];
+
+    const name = lineNames.get(key) ?? action.variety;
+    if (action.kind === "top-up") {
+      const held = action.resultingVarietyUnits - action.addedUnits;
+      return {
+        category,
+        itemSuggestion: copy.topUpSuggestion(name, action.addedUnits),
+        whyItHelps:
+          copy.topUpReason(
+            held,
+            action.variety.toLowerCase(),
+            action.addedUnits,
+            MIN_STOCKING_UNITS_PER_VARIETY,
+            gain,
+          ) + suffix,
+        addedUnits: action.addedUnits,
+        clears: action.clears.map((c) => constraintPhrase(c, locale)),
+      };
+    }
+
     return {
       category,
-      itemSuggestion: text.itemSuggestion,
-      whyItHelps: copy.newItemReason(text.pitch, MIN_STOCKING_UNITS_PER_VARIETY, gain),
+      itemSuggestion: copy.topUpSuggestion(name, action.addedUnits),
+      whyItHelps: copy.extraUnitsReason(action.addedUnits, gain) + suffix,
+      addedUnits: action.addedUnits,
+      clears: action.clears.map((c) => constraintPhrase(c, locale)),
     };
   });
+}
+
+function clearsSuffix(clears: readonly UnmetConstraint[], locale: Locale): string {
+  if (clears.length === 0) return "";
+  const copy = SCORECARD_COPY[locale];
+  return copy.clearsSuffix(clears.map((constraint) => constraintPhrase(constraint, locale)));
+}
+
+function constraintPhrase(constraint: UnmetConstraint, locale: Locale): string {
+  const copy = SCORECARD_COPY[locale];
+  switch (constraint.kind) {
+    case "category-varieties":
+      return copy.constraintPhrases.categoryVarieties(constraint.category, constraint.required);
+    case "category-units":
+      return copy.constraintPhrases.categoryUnits(constraint.category, constraint.required);
+    case "total-units":
+      return copy.constraintPhrases.totalUnits(REQUIRED_TOTAL_UNITS);
+    case "perishable-categories":
+      return copy.constraintPhrases.perishableCategories(
+        REQUIRED_PERISHABLE_CATEGORIES,
+        CATEGORIES.length,
+      );
+  }
 }

@@ -20,7 +20,7 @@ export const PROGRAM_STRIP: Program[] = [
   { abbr: "EBT", label: "Benefit payments" },
   { abbr: "EPA", label: "Waste & refrigerant" },
   { abbr: "OSHA", label: "Workplace safety" },
-  { abbr: "ABC", label: "Alcohol licence" },
+  { abbr: "ABC", label: "Alcohol license" },
   { abbr: "DOT", label: "Hazmat shipping" },
   { abbr: "CHP", label: "Health permit" },
   { abbr: "W&M", label: "Scales" },
@@ -59,7 +59,7 @@ export const INDUSTRIES: Industry[] = [
       },
       {
         title: "Permits stack up",
-        body: "Health permit, tobacco licence and scales certification all renew on their own dates. They go on one calendar.",
+        body: "Health permit, tobacco license and scales certification all renew on their own dates. They go on one calendar.",
       },
     ],
   },
@@ -91,19 +91,19 @@ export const INDUSTRIES: Industry[] = [
     slug: "liquor-tobacco",
     name: "Liquor & tobacco",
     description:
-      "State licence conditions, federal permits, age-verification posting",
+      "State license conditions, federal permits, age-verification posting",
     badges: ["ABC", "TTB", "TRL", "BTC", "FIRE"],
-    headline: "The licence conditions are longer than the licence.",
+    headline: "The license conditions are longer than the license.",
     intro:
-      "A liquor or tobacco licence comes with conditions that keep applying long after it's granted: posting, hours, age verification, federal permits. Ledger holds those conditions as well as the expiry date.",
+      "A liquor or tobacco license comes with conditions that keep applying long after it's granted: posting, hours, age verification, federal permits. Ledger holds those conditions as well as the expiry date.",
     risks: [
       {
-        title: "Licence conditions",
-        body: "State alcoholic beverage control attaches operating conditions to the licence. Ledger tracks the ones you have to keep meeting.",
+        title: "License conditions",
+        body: "State alcoholic beverage control attaches operating conditions to the license. Ledger tracks the ones you have to keep meeting.",
       },
       {
         title: "Federal permits",
-        body: "TTB permits for certain products carry their own filings on top of the state licence.",
+        body: "TTB permits for certain products carry their own filings on top of the state license.",
       },
       {
         title: "Age-verification posting",
@@ -145,7 +145,7 @@ export const INDUSTRIES: Industry[] = [
     risks: [
       {
         title: "Pesticide sales",
-        body: "Restricted-use products have licensing and record rules. Ledger tracks the licence and its renewal.",
+        body: "Restricted-use products have licensing and record rules. Ledger tracks the license and its renewal.",
       },
       {
         title: "Hazardous storage & fire load",
@@ -188,7 +188,7 @@ export const COVERAGE: CoverageLevel[] = [
       { abbr: "ABC", label: "Alcoholic beverage control" },
       { abbr: "W&M", label: "Weights and measures" },
       { abbr: "BAR", label: "Automotive repair registration" },
-      { abbr: "TRL", label: "Tobacco retail licence" },
+      { abbr: "TRL", label: "Tobacco retail license" },
       { abbr: "RSP", label: "Seller's permit and resale" },
       { abbr: "BOP", label: "Board of pharmacy" },
     ],
@@ -305,7 +305,6 @@ export const FOOTER_COLUMNS = [
     title: "Product",
     links: [
       { href: "/how-it-works", label: "How it works" },
-      { href: "/pitch", label: "The 5-minute version" },
       { href: "/dashboard", label: "Dashboard" },
       { href: "/demo", label: "Live demo" },
       { href: "/coverage", label: "Coverage" },

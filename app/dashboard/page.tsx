@@ -10,7 +10,7 @@ import { NON_AFFILIATION } from "@/lib/site-content";
 export const metadata: Metadata = {
   title: "The dashboard",
   description:
-    "Every licence a store holds on one screen: renewal dates, what is due this week, " +
+    "Every license a store holds on one screen: renewal dates, what is due this week, " +
     "and a wholesale order-record scan that feeds the SNAP stocking standard into the same score.",
 };
 
@@ -21,7 +21,7 @@ export default function DashboardPage() {
       <main>
         <PageHeader
           eyebrow="The dashboard"
-          title="Eight licences on one screen."
+          title="Eight licenses on one screen."
           intro="What a store owner sees after signing in: what is due, how long they have, and where the last order-record scan left them. Everything here is live, so edit a date or run a scan and the score moves."
         />
         <Section ground="tint">
@@ -33,7 +33,7 @@ export default function DashboardPage() {
             Your entries stay in this browser. {NON_AFFILIATION}
           </p>
         </Section>
-        <CtaBand title="Put your licences on this screen." />
+        <CtaBand title="Put your licenses on this screen." />
       </main>
       <Footer />
     </>

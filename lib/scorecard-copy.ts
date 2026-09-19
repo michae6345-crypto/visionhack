@@ -19,14 +19,36 @@ export interface ScorecardCopy {
   categoryLabels: Record<Category, string>;
   /** "brings dairy to 5 of 7 varieties" */
   varietyGain(category: Category, reached: number, required: number): string;
+  /** "gets dairy to its 21-unit minimum" — for units added to a variety that already counts. */
+  unitGain(category: Category, required: number): string;
   /** "gives dairy a perishable item, needed in 3 of 4 categories" */
   perishableGain(category: Category, required: number, categoryCount: number): string;
-  /** Appended to the first fix when the category is also missing a perishable. */
+  /** "adds 3 units toward the 84-unit total" — when no other minimum is short. */
+  towardTotalGain(units: number, required: number): string;
+  /** Appended to a fix when the category gains the perishable it was missing. */
   addsMissingPerishable(category: Category): string;
   /** "Select Cucumber bushel (stock 1 more)" */
   topUpSuggestion(name: string, more: number): string;
   topUpReason(units: number, variety: string, more: number, minUnits: number, gain: string): string;
   newItemReason(pitch: string, minUnits: number, gain: string): string;
+  extraUnitsReason(units: number, gain: string): string;
+  /** Fallback naming when a planned variety has no catalog entry. */
+  stockSuggestion(variety: string, units: number): string;
+  /** " This clears the dairy variety minimum (7) and the 84-unit total." */
+  clearsSuffix(phrases: string[]): string;
+  /** Names one requirement, for the sentence above. */
+  constraintPhrases: {
+    categoryVarieties(category: Category, required: number): string;
+    categoryUnits(category: Category, required: number): string;
+    totalUnits(required: number): string;
+    perishableCategories(required: number, categoryCount: number): string;
+  };
+}
+
+/** "a", "a and b", "a, b and c" — and the Spanish equivalent. */
+function joinList(items: string[], and: string): string {
+  if (items.length <= 1) return items[0] ?? "";
+  return `${items.slice(0, -1).join(", ")} ${and} ${items[items.length - 1]}`;
 }
 
 /** Spanish category names as they read mid-sentence, article included. */
@@ -35,6 +57,14 @@ const ES_CATEGORY_IN_SENTENCE: Record<Category, string> = {
   grains: "los granos",
   protein: "las proteínas",
   produce: "las frutas y verduras",
+};
+
+/** The same names after a preposition, where the article is dropped. */
+const ES_CATEGORY_SHORT: Record<Category, string> = {
+  dairy: "lácteos",
+  grains: "granos",
+  protein: "proteínas",
+  produce: "frutas y verduras",
 };
 
 export const SCORECARD_COPY: Record<Locale, ScorecardCopy> = {
@@ -47,13 +77,28 @@ export const SCORECARD_COPY: Record<Locale, ScorecardCopy> = {
     },
     varietyGain: (category, reached, required) =>
       `brings ${category} to ${reached} of ${required} varieties`,
+    unitGain: (category, required) => `gets ${category} to its ${required}-unit minimum`,
     perishableGain: (category, required, categoryCount) =>
       `gives ${category} a perishable item, needed in ${required} of ${categoryCount} categories`,
+    towardTotalGain: (units, required) =>
+      `adds ${units} ${units === 1 ? "unit" : "units"} toward the ${required}-unit total`,
     addsMissingPerishable: (category) => ` and adds the perishable item ${category} is missing`,
     topUpSuggestion: (name, more) => `${name} (stock ${more} more)`,
     topUpReason: (units, variety, more, minUnits, gain) =>
       `You already stock ${units} ${units === 1 ? "unit" : "units"} of ${variety}; ${more} more meets the ${minUnits}-unit minimum and ${gain}.`,
     newItemReason: (pitch, minUnits, gain) => `${pitch} Stocking ${minUnits} ${gain}.`,
+    extraUnitsReason: (units, gain) =>
+      `${units} more ${units === 1 ? "unit" : "units"} of a variety that already counts ${gain}.`,
+    stockSuggestion: (variety, units) => `${variety} (stock ${units})`,
+    clearsSuffix: (phrases) => ` Clears ${joinList(phrases, "and")}.`,
+    constraintPhrases: {
+      categoryVarieties: (category, required) =>
+        `the ${category} minimum of ${required} varieties`,
+      categoryUnits: (category, required) => `the ${category} minimum of ${required} units`,
+      totalUnits: (required) => `the ${required}-unit total`,
+      perishableCategories: (required, categoryCount) =>
+        `the perishable rule, ${required} of ${categoryCount} categories`,
+    },
   },
   es: {
     categoryLabels: {
@@ -64,14 +109,31 @@ export const SCORECARD_COPY: Record<Locale, ScorecardCopy> = {
     },
     varietyGain: (category, reached, required) =>
       `lleva ${ES_CATEGORY_IN_SENTENCE[category]} a ${reached} de ${required} variedades`,
+    unitGain: (category, required) =>
+      `lleva ${ES_CATEGORY_IN_SENTENCE[category]} a su mínimo de ${required} unidades`,
     perishableGain: (category, required, categoryCount) =>
       `le da a ${ES_CATEGORY_IN_SENTENCE[category]} un producto perecedero, necesario en ${required} de ${categoryCount} categorías`,
+    towardTotalGain: (units, required) =>
+      `agrega ${units} ${units === 1 ? "unidad" : "unidades"} al total de ${required} unidades`,
     addsMissingPerishable: (category) =>
       ` y agrega el producto perecedero que les falta a ${ES_CATEGORY_IN_SENTENCE[category]}`,
     topUpSuggestion: (name, more) => `${name} (surta ${more} más)`,
     topUpReason: (units, variety, more, minUnits, gain) =>
       `Ya tiene ${units} ${units === 1 ? "unidad" : "unidades"} de ${variety}; con ${more} más cumple el mínimo de ${minUnits} unidades y ${gain}.`,
     newItemReason: (pitch, minUnits, gain) => `${pitch} Surtir ${minUnits} ${gain}.`,
+    extraUnitsReason: (units, gain) =>
+      `${units} ${units === 1 ? "unidad" : "unidades"} más de una variedad que ya cuenta ${gain}.`,
+    stockSuggestion: (variety, units) => `${variety} (surta ${units})`,
+    clearsSuffix: (phrases) => ` Cumple ${joinList(phrases, "y")}.`,
+    constraintPhrases: {
+      categoryVarieties: (category, required) =>
+        `el mínimo de ${required} variedades de ${ES_CATEGORY_SHORT[category]}`,
+      categoryUnits: (category, required) =>
+        `el mínimo de ${required} unidades de ${ES_CATEGORY_SHORT[category]}`,
+      totalUnits: (required) => `el total de ${required} unidades`,
+      perishableCategories: (required, categoryCount) =>
+        `la regla de perecederos, ${required} de ${categoryCount} categorías`,
+    },
   },
 };
 
@@ -84,8 +146,17 @@ export type Suggestion = {
 } & Record<Locale, SuggestionText>;
 
 /**
- * Common, low-cost staples a corner store can add. Shelf-stable options come
- * first so perishables are only suggested when the category needs one.
+ * Common, low-cost staples a corner store can add.
+ *
+ * Order is a preference, not a ranking: lib/rules/optimizer.ts chooses on added
+ * stocking units and uses this order only to break ties, so shelf-stable options
+ * are listed first and a store is not told to buy fridge space it does not need.
+ *
+ * SEVEN PER CATEGORY IS A FLOOR, not a round number. A category with nothing in
+ * it needs seven varieties, and every variety the store already carries is
+ * filtered out of its own category, so a shorter list would leave gaps the
+ * optimizer cannot close. It reports `sufficient: false` when that happens
+ * rather than pretending a partial plan passes.
  */
 export const SUGGESTIONS: Record<Category, Suggestion[]> = {
   dairy: [
@@ -114,6 +185,16 @@ export const SUGGESTIONS: Record<Category, Suggestion[]> = {
       en: { itemSuggestion: "Galbani Mozzarella String Cheese, 12 ct (stock 3)", pitch: "A grab-and-go refrigerated snack." },
       es: { itemSuggestion: "Queso mozzarella en tiras Galbani, 12 piezas (surta 3)", pitch: "Una botana refrigerada para llevar." },
     },
+    {
+      variety: "sour cream", perishable: true,
+      en: { itemSuggestion: "Daisy Sour Cream, 16 oz (stock 3)", pitch: "A refrigerated staple that moves with tortillas and beans." },
+      es: { itemSuggestion: "Crema Daisy, 16 oz (surta 3)", pitch: "Un básico refrigerado que se vende con las tortillas y los frijoles." },
+    },
+    {
+      variety: "cream cheese", perishable: true,
+      en: { itemSuggestion: "Philadelphia Cream Cheese, 8 oz (stock 3)", pitch: "Keeps for weeks refrigerated and sells with bread." },
+      es: { itemSuggestion: "Queso crema Philadelphia, 8 oz (surta 3)", pitch: "Dura semanas refrigerado y se vende con el pan." },
+    },
   ],
   grains: [
     {
@@ -140,6 +221,16 @@ export const SUGGESTIONS: Record<Category, Suggestion[]> = {
       variety: "bolillo rolls", perishable: true,
       en: { itemSuggestion: "Fresh Bolillo Rolls, 6 ct (stock 3)", pitch: "Fresh bakery rolls are perishable and sell daily." },
       es: { itemSuggestion: "Bolillos frescos, 6 piezas (surta 3)", pitch: "El pan fresco de panadería es perecedero y se vende a diario." },
+    },
+    {
+      variety: "white rice", perishable: false,
+      en: { itemSuggestion: "Mahatma Long Grain White Rice, 2 lb (stock 3)", pitch: "Shelf-stable and one of the steadiest sellers in the store." },
+      es: { itemSuggestion: "Arroz blanco de grano largo Mahatma, 2 lb (surta 3)", pitch: "Se conserva sin refrigeración y es de lo que más se vende." },
+    },
+    {
+      variety: "elbow macaroni", perishable: false,
+      en: { itemSuggestion: "Barilla Elbow Macaroni, 16 oz (stock 3)", pitch: "Shelf-stable, cheap, and a different grain variety from rice." },
+      es: { itemSuggestion: "Coditos Barilla, 16 oz (surta 3)", pitch: "Se conservan sin refrigeración, son baratos y cuentan como una variedad distinta al arroz." },
     },
   ],
   protein: [
@@ -168,6 +259,16 @@ export const SUGGESTIONS: Record<Category, Suggestion[]> = {
       en: { itemSuggestion: "Jennie-O Ground Turkey, 1 lb (stock 3)", pitch: "Refrigerated and priced close to ground beef." },
       es: { itemSuggestion: "Pavo molido Jennie-O, 1 lb (surta 3)", pitch: "Refrigerado y con un precio parecido al de la carne molida de res." },
     },
+    {
+      variety: "dried pinto beans", perishable: false,
+      en: { itemSuggestion: "Dried Pinto Beans, 2 lb bag (stock 3)", pitch: "Shelf-stable and counted as protein, not produce." },
+      es: { itemSuggestion: "Frijol pinto seco, bolsa de 2 lb (surta 3)", pitch: "Se conserva sin refrigeración y cuenta como proteína, no como verdura." },
+    },
+    {
+      variety: "eggs", perishable: true,
+      en: { itemSuggestion: "Grade A Large Eggs, 12 ct (stock 3)", pitch: "Refrigerated, counted as protein, and bought weekly." },
+      es: { itemSuggestion: "Huevo grande Grado A, 12 piezas (surta 3)", pitch: "Refrigerado, cuenta como proteína y se compra cada semana." },
+    },
   ],
   produce: [
     {
@@ -194,6 +295,16 @@ export const SUGGESTIONS: Record<Category, Suggestion[]> = {
       variety: "carrots", perishable: true,
       en: { itemSuggestion: "Carrots, 2 lb bag (stock 3)", pitch: "Fresh, cheap and they keep for weeks in the cooler." },
       es: { itemSuggestion: "Zanahorias, bolsa de 2 lb (surta 3)", pitch: "Frescas, baratas y duran semanas en el refrigerador." },
+    },
+    {
+      variety: "canned corn", perishable: false,
+      en: { itemSuggestion: "Del Monte Whole Kernel Corn, 15.25 oz (stock 3)", pitch: "Shelf-stable and no fridge space needed." },
+      es: { itemSuggestion: "Elote en grano Del Monte, 15.25 oz (surta 3)", pitch: "Se conserva sin refrigeración y no ocupa espacio en el refrigerador." },
+    },
+    {
+      variety: "potatoes", perishable: true,
+      en: { itemSuggestion: "Russet Potatoes, 5 lb bag (stock 3)", pitch: "Fresh, keeps well in a dry corner, and sells year round." },
+      es: { itemSuggestion: "Papa russet, bolsa de 5 lb (surta 3)", pitch: "Fresca, se conserva bien en un lugar seco y se vende todo el año." },
     },
   ],
 };

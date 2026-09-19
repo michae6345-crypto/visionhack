@@ -182,8 +182,15 @@ const WHOLE_PRODUCE_DESCRIPTION_PATTERNS = [
   /^(?:(?:organic|fresh)\s+)*(?:(?:green|red|napa|savoy)\s+)?cabbages?$/,
   /^(?:(?:organic|fresh)\s+)*(?:(?:romaine|iceberg|green\s+leaf|red\s+leaf|butter|bibb|head)\s+)?lettuce(?:\s+(?:head|hearts?))?$/,
   /^(?:(?:organic|fresh)\s+)*celery(?:\s+(?:hearts?|stalks?|bunches?))?$/,
-  /^(?:(?:organic|fresh)\s+)*(?:(?:green|yellow|ripe|baby)\s+)?bananas?$/,
+  /^(?:(?:organic|fresh)\s+)*(?:(?:green|yellow|ripe|baby)\s+)?bananas?(?:\s+(?:petite|premium|jumbo|large))?$/,
   /^(?:(?:organic|fresh)\s+)*(?:baby\s+)?broccoli(?:\s+(?:crowns?|bunches?))?$/,
+  // Added after eval/RESULTS.md showed these four descriptions losing their
+  // perishable flag: the list had no potato, lime or carrot at all, so a store
+  // whose only fresh produce was potatoes read as carrying none.
+  /^(?:(?:organic|fresh)\s+)*(?:(?:russet|red|white|gold(?:en)?|yukon|idaho|new|baby)\s+)?potato(?:es)?$/,
+  /^(?:(?:organic|fresh)\s+)*(?:(?:persian|key|seedless)\s+)?limes?(?:\s+(?:persian|key|seedless))?$/,
+  /^(?:(?:organic|fresh)\s+)*(?:(?:persian|meyer|seedless)\s+)?lemons?(?:\s+(?:meyer|seedless))?$/,
+  /^(?:(?:organic|fresh)\s+)*(?:(?:baby|jumbo|cut|whole|bunch(?:ed)?)\s+)?carrots?$/,
 ];
 
 function normalizeWholeProduceDescription(sourceLineText: string): string {
@@ -200,7 +207,7 @@ function normalizeWholeProduceDescription(sourceLineText: string): string {
       /\b\d+(?:\.\d+)?\s*(?:ct|count|ea|each|rolls?|units?|packs?|fl\s*oz|oz|lbs?|#|gal|qts?|pts?|ml|l)(?=\s|$)/gi,
       " ",
     )
-    .replace(/\b(?:cello\s+wrap|no\s+sleeve|pints?|bushels?|box(?:es)?)\b/gi, " ")
+    .replace(/\b(?:cello\s+wrap|no\s+sleeve|pints?|bushels?|box(?:es)?|bags?|sacks?|cases?)\b/gi, " ")
     .replace(/[^a-z]+/g, " ")
     .trim()
     .replace(/\s+/g, " ");
@@ -253,8 +260,12 @@ function packCountFromProduceText(
  * Bind pass 2 back to pass 1 and replace model-guessed factors with values
  * parsed from the transcription. This is the hard safety boundary before the
  * deterministic partition/rule engine sees model output.
+ *
+ * Exported because it is the layer that decides most of the arithmetic, so the
+ * eval harness (eval/) replays recorded and authored model responses through it
+ * directly, with no network in the way.
  */
-function reconcileClassification(
+export function reconcileClassification(
   raw: RawExtraction,
   classified: Classification,
 ): Classification {
@@ -529,11 +540,17 @@ export async function extractRawLines(
   });
 }
 
-/** Pass 2: classify the transcribed lines. */
-export async function classifyLines(raw: RawExtraction): Promise<Classification> {
+/**
+ * Pass 2 as the model answers it, before reconciliation.
+ *
+ * Separate from classifyLines so a caller that needs to record what the model
+ * actually said — the eval harness does — can keep the raw answer instead of the
+ * reconciled one.
+ */
+export async function classifyRawLines(raw: RawExtraction): Promise<Classification> {
   if (raw.lines.length === 0) return { items: [] };
 
-  const classified = await runPass({
+  return runPass({
     stage: "classification",
     systemPrompt: CLASSIFY_SYSTEM_PROMPT,
     userContent: `Classify these transcribed invoice lines:\n\n${JSON.stringify(
@@ -546,5 +563,10 @@ export async function classifyLines(raw: RawExtraction): Promise<Classification>
       "Submit one classified item for each transcribed invoice line, in order.",
     schema: ClassificationSchema,
   });
-  return reconcileClassification(raw, classified);
+}
+
+/** Pass 2: classify the transcribed lines, reconciled against the transcription. */
+export async function classifyLines(raw: RawExtraction): Promise<Classification> {
+  if (raw.lines.length === 0) return { items: [] };
+  return reconcileClassification(raw, await classifyRawLines(raw));
 }
