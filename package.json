@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "smoke": "node scripts/smoke-scan.mjs",
-    "test": "tsc -p tsconfig.smoke.json && node --test scripts/rules.test.mjs scripts/standard.test.mjs scripts/optimizer.test.mjs scripts/rule-engine.test.mjs scripts/pipeline.test.mjs scripts/store.test.mjs scripts/calendar.test.mjs scripts/ui-copy.test.mjs scripts/eval-metrics.test.mjs",
+    "test": "tsc -p tsconfig.smoke.json && node --test scripts/rules.test.mjs scripts/standard.test.mjs scripts/optimizer.test.mjs scripts/rule-engine.test.mjs scripts/pipeline.test.mjs scripts/shelf.test.mjs scripts/store.test.mjs scripts/calendar.test.mjs scripts/ui-copy.test.mjs scripts/eval-metrics.test.mjs",
     "eval": "tsc -p tsconfig.smoke.json && node eval/run.mjs",
     "eval:live": "tsc -p tsconfig.smoke.json && node eval/run.mjs --live",
     "eval:images": "node eval/render.mjs",

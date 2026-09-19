@@ -145,7 +145,11 @@
   flex-wrap: wrap;
   gap: 34px 44px;
   justify-content: center;
-  margin-bottom: 44px;
+  /* Capped so the ten badges break into two balanced rows. Uncapped they
+     fit nine across at desktop widths and orphan the tenth on a row of its
+     own. */
+  max-width: 880px;
+  margin: 0 auto 44px;
 }
 .nonAff {
   font-size: 13px;
@@ -569,11 +573,11 @@
   padding: 4px;
   cursor: pointer;
   border-radius: 18px;
-  opacity: 0.5;
+  opacity: 0.62;
   transition: opacity 0.16s ease, transform 0.16s ease;
 }
 .stripToggle:hover {
-  opacity: 0.85;
+  opacity: 0.92;
   transform: translateY(-2px);
 }
 .stripToggle[data-held="true"] {

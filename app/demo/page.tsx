@@ -5,6 +5,7 @@ import { Section } from "@/components/Section";
 import { PageHeader } from "@/components/PageHeader";
 import { DemoScanner } from "@/components/demo/DemoScanner";
 import { CtaBand } from "@/components/sections/CtaBand";
+import { ShelfSimulator } from "@/components/ShelfSimulator";
 import { NON_AFFILIATION } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -32,6 +33,18 @@ export default function DemoPage() {
             {NON_AFFILIATION}
           </p>
         </Section>
+        <Section ground="paper">
+          <div style={{ maxWidth: 720, margin: "0 0 28px" }}>
+            <h2 className="display">No order record to hand?</h2>
+            <p className="body-l mute" style={{ marginTop: 12 }}>
+              Build a shelf instead. The same rule engine scores it, so you can
+              see exactly where the thresholds bite without photographing
+              anything.
+            </p>
+          </div>
+          <ShelfSimulator initialPreset="oneShort" />
+        </Section>
+
         <CtaBand />
       </main>
       <Footer />

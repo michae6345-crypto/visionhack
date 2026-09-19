@@ -21,19 +21,45 @@ const C = {
   slate: "#2c3350",
   steel: "#8792b5",
   cream: "#f6efe2",
+  kraft: "#cfa36b",
+  kraftDk: "#a87c46",
+  wheat: "#e9a94e",
   white: "#ffffff",
 };
 
 const ART: Record<string, React.ReactNode> = {
-  // Grocery bag of staples.
+  /*
+   * A kraft grocery bag with three staples showing above the rim: a scored
+   * loaf, a gable-top carton and an apple. Three rather than four, because a
+   * fourth object stops reading at the 28px size the nav uses.
+   */
   SNAP: (
     <>
-      <path d="M5 9h14l-1.3 11.4a1.6 1.6 0 0 1-1.6 1.4H7.9a1.6 1.6 0 0 1-1.6-1.4z" fill={C.green} />
-      <path d="M9.6 9V6.4a2.4 2.4 0 0 1 4.8 0V9" fill="none" stroke={C.green} strokeWidth="1.7" />
-      <rect x="7.4" y="2.6" width="3.1" height="6.4" rx="0.8" transform="rotate(-8 8.9 5.8)" fill={C.purple} />
-      <path d="M15.2 8.6c.3-2.6 1.7-4.6 3.6-5.4 1 2 .5 4.4-1.2 5.9z" fill={C.orange} />
-      <circle cx="13.2" cy="6.6" r="2.3" fill={C.red} />
-      <path d="M13.2 4.3c.2-.8.8-1.3 1.5-1.4-.1.8-.6 1.3-1.5 1.4z" fill={C.greenLt} />
+      {/* Grains: a scored loaf. */}
+      <path d="M4.6 8.4V6.1c0-1.6 1.3-2.9 2.9-2.9s2.9 1.3 2.9 2.9v2.3z" fill={C.wheat} />
+      <path
+        d="M6.2 4.6l-.5 1.2M7.5 4.2l-.5 1.2M8.8 4.6l-.5 1.2"
+        stroke={C.kraftDk}
+        strokeWidth="0.85"
+        strokeLinecap="round"
+        opacity="0.7"
+      />
+      {/* Dairy: a gable-top carton. */}
+      <path d="M11 8.4V4.6l2-1.7 2 1.7v3.8z" fill={C.sky} />
+      <path d="M11 4.6h4l-2-1.7z" fill={C.blue} />
+      <rect x="11.8" y="5.7" width="2.4" height="1.6" rx="0.35" fill={C.white} opacity="0.92" />
+      {/* Fruits and vegetables. */}
+      <circle cx="18.2" cy="5.9" r="2.5" fill={C.red} />
+      <path d="M18.2 3.6c.2-.9.9-1.4 1.7-1.5-.1.9-.7 1.4-1.7 1.5z" fill={C.green} />
+      {/* The bag: folded rim, tapered body, and a gusset down the right. */}
+      <path d="M3.4 8.2h17.2v2.9H3.4z" fill={C.kraftDk} />
+      <path d="M4.5 11.1h15l-1.1 9.4a1.9 1.9 0 0 1-1.9 1.7H7.5a1.9 1.9 0 0 1-1.9-1.7z" fill={C.kraft} />
+      <path
+        d="M14.3 11.1h5.2l-1.1 9.4a1.9 1.9 0 0 1-1.9 1.7h-3.3z"
+        fill={C.kraftDk}
+        opacity="0.16"
+      />
+      <path d="M12 11.1v11.1" stroke={C.kraftDk} strokeWidth="0.8" opacity="0.35" />
     </>
   ),
   // Milk carton and fruit: the WIC food list.
@@ -47,13 +73,35 @@ const ART: Record<string, React.ReactNode> = {
       <rect x="16.5" y="6.6" width="1.1" height="3.2" rx="0.5" fill={C.green} />
     </>
   ),
-  // Benefit card with a chip.
+  /*
+   * A benefit card, drawn as one: magnetic stripe, an EMV chip with its contact
+   * traces, the concentric contactless arcs and an embossed number row.
+   */
   EBT: (
     <>
-      <rect x="2.4" y="5.2" width="19.2" height="13.6" rx="2.4" fill={C.blue} />
-      <rect x="2.4" y="8.4" width="19.2" height="2.8" fill={C.slate} />
-      <rect x="5.2" y="13" width="4.4" height="3.4" rx="0.8" fill={C.yellow} />
-      <rect x="12.4" y="14.4" width="6.4" height="1.6" rx="0.8" fill={C.white} opacity="0.75" />
+      <rect x="1.8" y="4.4" width="20.4" height="15.2" rx="2.6" fill={C.blue} />
+      <rect x="1.8" y="7.4" width="20.4" height="3.1" fill={C.slate} />
+      {/* Chip. */}
+      <rect x="4.2" y="11.7" width="5.8" height="4.2" rx="0.85" fill={C.yellow} />
+      <path
+        d="M6.1 11.7v4.2M8.1 11.7v4.2M4.2 13.8h5.8"
+        stroke={C.slate}
+        strokeWidth="0.5"
+        opacity="0.45"
+      />
+      {/* Contactless: three arcs about one centre, as on a real card. */}
+      <g fill="none" stroke={C.white} strokeWidth="1.15" strokeLinecap="round" opacity="0.92">
+        <path d="M16.46 12.66a1.7 1.7 0 0 1 0 2.28" />
+        <path d="M17.43 11.79a3 3 0 0 1 0 4.02" />
+        <path d="M18.4 10.92a4.3 4.3 0 0 1 0 5.76" />
+      </g>
+      {/* Embossed digits, fading the way a card's do under a photo. */}
+      <g fill={C.white}>
+        <rect x="4.2" y="17.2" width="2.9" height="1.2" rx="0.6" opacity="0.85" />
+        <rect x="7.6" y="17.2" width="2.9" height="1.2" rx="0.6" opacity="0.62" />
+        <rect x="11" y="17.2" width="2.9" height="1.2" rx="0.6" opacity="0.44" />
+        <rect x="14.4" y="17.2" width="2.9" height="1.2" rx="0.6" opacity="0.3" />
+      </g>
     </>
   ),
   // Leaf over clean water.
