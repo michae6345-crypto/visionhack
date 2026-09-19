@@ -197,11 +197,30 @@ to that function is rejected. Model prose is never read as data.
 
 `POST /api/scan` is documented in [docs/api-scan.md](docs/api-scan.md).
 
+### The interactive shelf
+
+[`components/ShelfSimulator.tsx`](components/ShelfSimulator.tsx) on
+`/how-it-works` and `/demo` lets a reader stock a shelf and watch the verdict
+move. It calls `evaluateStandard` directly — the same function that scores a
+photographed record — so it cannot drift from what a scan would say, and there
+is no model and no network call behind it.
+
+It exists to make the rule's sharpest edge visible by doing it: take a variety
+from three units to two and the category loses the variety *and* all three of
+its units, because stock in a variety below the minimum counts for nothing.
+
+Its catalogue and presets are in [`lib/shelf.ts`](lib/shelf.ts). The presets are
+derived from the thresholds rather than typed out, and
+[`scripts/shelf.test.mjs`](scripts/shelf.test.mjs) asserts each one lands on the
+verdict its button claims — a preset labelled "exactly at the line" that did not
+actually meet the standard would teach the rule wrong.
+
 ## Repository layout
 
 | Path | |
 | --- | --- |
 | `app/` | Next.js App Router pages and the scan route |
+| `components/` | The UI, including the interactive shelf |
 | `lib/rules/` | The standard, the partition step, the optimizer, the constants |
 | `lib/vision/` | Prompts, Zod schemas, the two-pass pipeline |
 | `eval/` | Fixtures, metrics, harness, results |

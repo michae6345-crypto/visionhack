@@ -31,6 +31,30 @@
     "Segoe UI", Roboto, sans-serif;
 }
 
+/*
+ * --gutter sets the horizontal padding of the nav, the hero, every Section and
+ * the footer, so it has to come down on a narrow screen. Held flat at 72px a
+ * side, a 390px phone is left 246px of content, and the hero headline sets
+ * about 270px at its smallest — so the page scrolls sideways before it is
+ * narrow enough to be a phone at all.
+ *
+ * Measured at 500px, which is as narrow as headless Chromium will render:
+ * below that the screenshot is a crop of a 500px viewport, not a smaller one.
+ */
+@media (max-width: 1024px) {
+  :root {
+    --gutter: 40px;
+    --section-y: 56px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --gutter: 20px;
+    --section-y: 46px;
+  }
+}
+
 *,
 *::before,
 *::after {

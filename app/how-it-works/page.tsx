@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/Badge";
 import { Reveal } from "@/components/Reveal";
 import { CtaBand } from "@/components/sections/CtaBand";
+import { ShelfSimulator } from "@/components/ShelfSimulator";
 import { COVERAGE, NON_AFFILIATION } from "@/lib/site-content";
 import styles from "./how.module.css";
 
@@ -150,6 +151,26 @@ export default function HowItWorksPage() {
               </Reveal>
             ))}
           </div>
+        </Section>
+
+        <Section ground="paper">
+          <div className={styles.lead}>
+            <Reveal>
+              <h2 className="display">Try the rule yourself</h2>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <p className="body-l" style={{ color: "var(--mute)" }}>
+                Stock the shelf and watch the verdict move. The panel is scored by
+                the same function that scores a photographed order record, so what
+                it says here is what a scan would say. Take a variety from three
+                units down to two and see what it costs.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.1}>
+            <ShelfSimulator initialPreset="typical" />
+          </Reveal>
         </Section>
 
         <Section ground="paper">
