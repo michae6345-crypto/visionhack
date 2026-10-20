@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { useInView, useReducedMotion } from "motion/react";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import styles from "./StatRing.module.css";
 
@@ -13,7 +13,6 @@ interface StatRingProps {
 }
 
 /** Framer's standard ease, matching the rest of the site's motion. */
-const EASE = [0.22, 0.68, 0.28, 1] as const;
 const DURATION = 0.7;
 
 /**
@@ -67,50 +66,31 @@ function useTween(target: number, active: boolean): number {
   return value;
 }
 
+const CELLS = 20;
+
+/**
+ * The headline readiness number, set like the total at the foot of a ledger
+ * page: a big tabular figure over a 20-cell rule, one cell per 5%.
+ */
 export function StatRing({ percent, size = 160, label, tone = "blue" }: StatRingProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const inView = useInView(wrapRef, { once: true, amount: 0.6 });
-  const reduce = useReducedMotion();
   const clamped = Math.max(0, Math.min(100, percent));
-  const stroke = 12;
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const offset = c * (1 - clamped / 100);
-  const color = tone === "bad" ? "var(--bad)" : "var(--blue)";
   const shown = useTween(clamped, inView);
+  const lit = Math.round((shown / 100) * CELLS);
 
   return (
-    <div ref={wrapRef} className={styles.wrap} style={{ width: size, height: size }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke="var(--tint)"
-          strokeWidth={stroke}
-        />
-        <motion.circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={c}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          initial={reduce ? false : { strokeDashoffset: c }}
-          // Held at full until the ring scrolls into view, then it tracks
-          // `offset` for the life of the component, re-animating on every change.
-          animate={inView ? { strokeDashoffset: offset, stroke: color } : undefined}
-          style={reduce ? { strokeDashoffset: offset, stroke: color } : { stroke: color }}
-          transition={{ duration: DURATION, ease: EASE }}
-        />
-      </svg>
-      <div className={styles.center}>
-        <span className={styles.value}>{Math.round(shown)}%</span>
-        {label ? <span className={styles.label}>{label}</span> : null}
-      </div>
+    <div ref={wrapRef} className={styles.wrap} data-tone={tone} style={{ width: size }}>
+      {label ? <span className={styles.label}>{label}</span> : null}
+      <span className={styles.value}>
+        {Math.round(shown)}
+        <small>%</small>
+      </span>
+      <span className={styles.cells} aria-hidden="true">
+        {Array.from({ length: CELLS }).map((_, i) => (
+          <i key={i} data-on={i < lit} />
+        ))}
+      </span>
     </div>
   );
 }

@@ -1,43 +1,51 @@
 .wrap {
-  position: relative;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-
-.center {
-  position: absolute;
-  inset: 0;
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  /* Hold the text clear of the 12px stroke and its round cap, so a label that
-     wraps sits inside the ring instead of crossing it. */
-  padding: 0 18px;
-  text-align: center;
-}
-
-.value {
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+  gap: 8px;
+  flex: none;
+  padding: 14px 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
 }
 
 .label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  line-height: 1.2;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--mute);
-  /* Labels run from one word ("Ready") to two ("categories clear"). Centre
-     them and split the wrap evenly rather than leaving a stray last word. */
-  text-align: center;
-  text-wrap: balance;
-  max-width: 100%;
+}
+
+.value {
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+.value small {
+  font-size: 0.45em;
+  font-weight: 500;
+  margin-left: 2px;
+  color: var(--mute);
+}
+.wrap[data-tone="bad"] .value {
+  color: var(--bad);
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 2px;
+}
+.cells i {
+  display: block;
+  height: 10px;
+  background: var(--line);
+}
+.cells i[data-on="true"] {
+  background: var(--ink);
+}
+.wrap[data-tone="bad"] .cells i[data-on="true"] {
+  background: var(--bad);
 }
