@@ -34,7 +34,7 @@
   border-radius: 8px;
 }
 .nav span[data-active="true"] {
-  background: var(--paper);
+  background: var(--sheet);
   color: var(--ink);
   font-weight: 600;
   box-shadow: 0 1px 0 rgba(16, 20, 32, 0.04);

@@ -4,7 +4,11 @@ import { Button } from "@/components/Button";
 import { DashboardMock } from "./DashboardMock";
 import styles from "./sections.module.css";
 
-const TRUST = ["Every license on one dashboard", "Set up in ten minutes", "English and Spanish"];
+const FACTS = [
+  ["Programmes tracked", "18"],
+  ["Set-up", "10 min"],
+  ["Languages", "EN / ES"],
+];
 
 /**
  * The entrance animation is CSS (see app/globals.css), so the hero paints with
@@ -20,13 +24,10 @@ export function Hero() {
 
   return (
     <section className={styles.hero} data-ground="paper">
-      <div className={styles.heroGrid} aria-hidden="true" />
-      <div className={styles.heroGlow} aria-hidden="true" />
-
       <div className={styles.heroInner}>
-        <span {...delay(0)} className={`rise ${styles.heroPill}`}>
-          <span>license tracking for small stores</span>
-        </span>
+        <p {...delay(0)} className={`rise eyebrow ${styles.heroKicker}`}>
+          Ledger &mdash; license tracking for corner stores
+        </p>
 
         <h1 {...delay(0.05)} className={`rise display-xl ${styles.heroTitle}`}>
           Keep every license
@@ -48,13 +49,14 @@ export function Hero() {
           </Button>
         </div>
 
-        <div {...delay(0.2)} className={`rise ${styles.heroTrust}`}>
-          {TRUST.map((t) => (
-            <span key={t} className={styles.heroTrustItem}>
-              {t}
-            </span>
+        <dl {...delay(0.2)} className={`rise ${styles.heroFacts}`}>
+          {FACTS.map(([k, v]) => (
+            <div key={k} className={styles.heroFact}>
+              <dt>{k}</dt>
+              <dd className="tnum">{v}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
 
         <div className={`slide-in ${styles.heroWindow}`} style={{ animationDelay: "0.28s" }}>
           {/* The hero scorecard is the most-clicked thing on the page. It

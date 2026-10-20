@@ -1,11 +1,9 @@
 .window {
   width: 100%;
   border-radius: var(--r-card);
-  background: var(--paper);
-  border: 1px solid var(--line);
-  box-shadow:
-    0 1px 0 rgba(16, 20, 32, 0.02),
-    0 24px 60px -24px rgba(16, 20, 32, 0.22);
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  box-shadow: 6px 6px 0 var(--wash);
   overflow: hidden;
 }
 
@@ -35,11 +33,10 @@
   align-items: center;
   gap: 7px;
   flex: 1;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
   color: var(--mute);
-  letter-spacing: -0.01em;
 }
 
 .spacer {
@@ -48,5 +45,5 @@
 }
 
 .body {
-  background: var(--paper);
+  background: var(--sheet);
 }
