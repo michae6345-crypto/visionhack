@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
 import { REQUIRED_VARIETIES } from "@/lib/ui-copy";
 import styles from "./CategoryBar.module.css";
 
@@ -9,50 +8,34 @@ interface CategoryBarProps {
   count: number;
   /** Varieties needed to clear the category. Defaults to the real rule. */
   target?: number;
-  /** Stagger index for the fill animation. */
+  /** Kept for callers; the boxes no longer animate. */
   index?: number;
 }
 
-const EASE = [0.22, 0.68, 0.28, 1] as const;
-
-export function CategoryBar({ name, count, target = REQUIRED_VARIETIES, index = 0 }: CategoryBarProps) {
-  const reduce = useReducedMotion();
+export function CategoryBar({ name, count, target = REQUIRED_VARIETIES }: CategoryBarProps) {
   const short = count < target;
   const segments = Math.max(target, count);
-  const filledRatio = Math.min(count, target) / target;
 
   return (
-    <div className={styles.row}>
-      <div className={styles.head}>
-        <span className={styles.name}>{name}</span>
-        <span className={styles.count} data-short={short}>
-          <span className={styles.dot} aria-hidden="true" />
-          {count} of {target}
-        </span>
-      </div>
-      <div
-        className={styles.track}
-        role="meter"
-        aria-valuenow={count}
-        aria-valuemin={0}
-        aria-valuemax={target}
-        aria-label={`${name}: ${count} of ${target}`}
-      >
-        <motion.div
-          className={styles.fill}
-          data-short={short}
-          initial={reduce ? false : { scaleX: 0 }}
-          whileInView={reduce ? undefined : { scaleX: filledRatio }}
-          style={{ scaleX: reduce ? filledRatio : undefined, transformOrigin: "left" }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.5, ease: EASE, delay: index * 0.08 }}
-        />
-        <div className={styles.ticks} aria-hidden="true">
-          {Array.from({ length: segments - 1 }).map((_, i) => (
-            <span key={i} style={{ left: `${((i + 1) / segments) * 100}%` }} />
-          ))}
-        </div>
-      </div>
+    <div
+      className={styles.row}
+      role="meter"
+      aria-valuenow={count}
+      aria-valuemin={0}
+      aria-valuemax={target}
+      aria-label={`${name}: ${count} of ${target}`}
+    >
+      <span className={styles.name}>{name}</span>
+      {/* One box per variety the rule asks for, like a tally column in a
+          ledger: filled when it is on the shelf, struck through when not. */}
+      <span className={styles.cells} aria-hidden="true">
+        {Array.from({ length: segments }).map((_, i) => (
+          <i key={i} data-on={i < count} data-short={short} />
+        ))}
+      </span>
+      <span className={styles.count} data-short={short}>
+        {count}/{target}
+      </span>
     </div>
   );
 }

@@ -16,7 +16,7 @@
   gap: 3px;
   padding: 4px;
   background: var(--tint);
-  border-radius: 12px;
+  border-radius: 3px;
 }
 .tabs button {
   display: inline-flex;
@@ -28,7 +28,7 @@
   font-size: 14px;
   color: var(--mute);
   padding: 8px 14px;
-  border-radius: 9px;
+  border-radius: 3px;
   cursor: pointer;
 }
 .tabs button[data-active="true"] {
@@ -64,7 +64,7 @@
   font-size: 14px;
   padding: 11px 14px 11px 38px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 3px;
   background: var(--paper);
   color: var(--ink);
 }
@@ -148,7 +148,7 @@
   text-transform: uppercase;
   color: var(--mute);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 3px;
   padding: 2px 8px;
 }
 .rowLabel {
@@ -195,7 +195,7 @@
 }
 .panelInner {
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 3px;
   padding: 24px;
   display: flex;
   flex-direction: column;

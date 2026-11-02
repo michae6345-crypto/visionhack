@@ -31,10 +31,10 @@
   font-weight: 500;
   color: var(--mute);
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: 2px;
 }
 .nav span[data-active="true"] {
-  background: var(--paper);
+  background: var(--sheet);
   color: var(--ink);
   font-weight: 600;
   box-shadow: 0 1px 0 rgba(16, 20, 32, 0.04);
@@ -103,7 +103,7 @@
 .ringNote {
   font-size: 13px;
   color: var(--mute);
-  text-align: center;
+  text-align: left;
   max-width: 150px;
 }
 .bars {
@@ -116,7 +116,7 @@
   align-items: center;
   gap: 12px;
   border: 1px solid color-mix(in srgb, var(--bad) 30%, var(--line));
-  border-radius: 11px;
+  border-radius: 2px;
   padding: 14px 16px;
 }
 .fixDot {

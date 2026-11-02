@@ -1,81 +1,64 @@
+/* A ledger row: name, one box per required variety, the count in mono. */
 .row {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.head {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(70px, 110px) minmax(0, 1fr) 44px;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px dotted var(--rule);
 }
 
 .name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 
+.cells {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+.cells i {
+  display: block;
+  height: 14px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+}
+.cells i[data-on="false"] {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent 0 3px,
+    color-mix(in srgb, var(--bad) 55%, transparent) 3px 4px
+  );
+  border: 1px dashed var(--bad);
+}
+.cells i[data-on="true"][data-short="true"] {
+  background: var(--bad);
+  border-color: var(--bad);
+}
+
 .count {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
+  font-family: var(--mono);
   font-size: 13px;
-  font-weight: 600;
+  text-align: right;
   font-variant-numeric: tabular-nums;
-  color: var(--mute);
+  color: var(--ink);
 }
 .count[data-short="true"] {
   color: var(--bad);
+  font-weight: 500;
 }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--blue);
+:global([data-ground="coal"]) .row {
+  border-color: var(--line-dark);
 }
-.count[data-short="true"] .dot {
-  background: var(--bad);
-}
-
-.track {
-  position: relative;
-  height: 10px;
-  border-radius: 999px;
-  background: var(--tint);
-  overflow: hidden;
-}
-
-.fill {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: var(--blue);
-}
-.fill[data-short="true"] {
-  background: var(--bad);
-}
-
-.ticks span {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  transform: translateX(-1px);
+:global([data-ground="coal"]) .cells i[data-on="true"] {
   background: var(--paper);
+  border-color: var(--paper);
 }
-
-:global([data-ground="coal"]) .track {
-  background: var(--line-dark);
-}
-:global([data-ground="coal"]) .fill {
-  background: var(--blue-lift);
-}
-:global([data-ground="coal"]) .ticks span {
-  background: var(--coal);
-}
-:global([data-ground="coal"]) .name {
+:global([data-ground="coal"]) .name,
+:global([data-ground="coal"]) .count {
   color: var(--paper);
 }

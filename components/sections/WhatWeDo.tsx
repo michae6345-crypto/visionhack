@@ -5,17 +5,17 @@ import styles from "./sections.module.css";
 
 const STEPS = [
   {
-    n: "1",
+    n: "01",
     title: "Tell us which licenses you hold",
     body: "SNAP, the county health permit, tobacco, ABC, scales, business tax. You type them in once, with the numbers and the dates off the certificates.",
   },
   {
-    n: "2",
+    n: "02",
     title: "We watch every renewal date",
     body: "Ledger tells you what is expiring, how long you have, and which one shuts the store if you miss it. No letter to lose, no date to remember.",
   },
   {
-    n: "3",
+    n: "03",
     title: "Photograph a delivery invoice",
     body: "Ledger reads the lines, counts the sellable units and checks your shelves against the SNAP stocking rule. You get a pass or fail before an inspector gives you one.",
   },
